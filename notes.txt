@@ -1,1 +1,7 @@
 Just to make sure I can commit&push to this repo
+mvn clean
+    delete the target folder
+mvn compile
+    compile the main/java files
+mvn test
+    compile main + test 

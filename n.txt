@@ -1,6 +1,0 @@
-mvn clean
-    delete the target folder
-mvn compile
-    compile the main/java files
-mvn test
-    compile main + test 
