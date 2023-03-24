@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>projet</groupId>
+  <artifactId>r-trees</artifactId>
+  <version>1.0-SNAPSHOT</version> <!--Snapshot veut dire que c'est pas la version finale c'est la v1.0-->
+  <packaging>jar</packaging>
+  <name>r-trees</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+      <!--projet est contruit avec java 17 pour java 17 (compiler et tt-->
+      <maven.compiler.source>17</maven.compiler.source>
+      <maven.compiler.target>17</maven.compiler.target>
+      <junit.version>5.8.2</junit.version>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <geotools.version>30-SNAPSHOT</geotools.version>
+      <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+  <repositories>
+    <repository>
+        <id>osgeo</id>
+        <name>OSGeo Release Repository</name>
+        <url>https://repo.osgeo.org/repository/release/</url>
+        <snapshots><enabled>false</enabled></snapshots>
+        <releases><enabled>true</enabled></releases>
+    </repository>
+    <repository>
+        <id>osgeo-snapshot</id>
+        <name>OSGeo Snapshot Repository</name>
+        <url>https://repo.osgeo.org/repository/snapshot/</url>
+        <snapshots><enabled>true</enabled></snapshots>
+        <releases><enabled>false</enabled></releases>
+    </repository>
+  </repositories>
+  <build>
+      <!--pour utiliser les plugins-->
+      <plugins>
+          <plugin>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <version>2.22.2</version>
+          </plugin>
+          <plugin>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <version>2.22.2</version>
+          </plugin>
+      </plugins>
+  </build>
+  <dependencies>
+    <!-- pour les libraries consid├®r├®e comme des d├®pendance-->
+    <!-- le scope est pour dÔö£┬«finir quand est-ce que l'on a besoin de la librairie-->
+    <!--Si je ne met rien Ôö£┬║a veut dire que le scope est tout le projet-->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-shapefile</artifactId>
+      <version>${geotools.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-swing</artifactId>
+      <version>${geotools.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.locationtech.jts</groupId>
+        <artifactId>jts-core</artifactId>
+        <version>1.19.0</version>
+    </dependency>
+  </dependencies>
+</project>
