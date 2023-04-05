@@ -57,7 +57,8 @@ public class SinglePoint {
 
         //String filename="../projetinfof203/data/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
         //String filename="/home/cbr/50m_cultural/WB_countries_Admin0_10m.shp";
-        String filename="/home/cbr/Unif2/50m_cultural/WB_countries_Admin0_10m.shp";
+        //String filename="/home/cbr/Unif2/50m_cultural/WB_countries_Admin0_10m.shp";
+        String filename="/home/cbr/Unif2/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
         
         //String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
         //String filename="/home/cbr/50m_cultural/ne_10m_admin_1_sel.shp";
@@ -86,14 +87,14 @@ public class SinglePoint {
         //Point p = gb.point(58.0, 47.0);
         //Point p = gb.point(10.6,59.9);// Oslo
         
-        //Point p = gb.point(-70.9,-33.4);// Santiago
+        Point p = gb.point(-70.9,-33.4);// Santiago
         //Point p = gb.point(169.2, -52.5);//NZ
         
         //Point p = gb.point(172.97365198326708, 1.8869725782923172);
         
         
-        Point p = gb.point(r.nextInt((int) global_bounds.getMinX(), (int) global_bounds.getMaxX()), 
-        				r.nextInt((int) global_bounds.getMinY(), (int) global_bounds.getMaxY()));
+        //Point p = gb.point(r.nextInt((int) global_bounds.getMinX(), (int) global_bounds.getMaxX()),
+                        //r.nextInt((int) global_bounds.getMinY(), (int) global_bounds.getMaxY()));
         
         SimpleFeature target=null;
         

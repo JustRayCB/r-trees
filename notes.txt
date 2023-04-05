@@ -5,3 +5,6 @@ mvn compile
     compile the main/java files
 mvn test
     compile main + test 
+
+mvn exec:java -Dexec.mainClass=projet.SinglePoint
+    execute
