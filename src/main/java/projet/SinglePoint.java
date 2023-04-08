@@ -46,7 +46,7 @@ import org.geotools.swing.JMapFrame;
  */
 public class SinglePoint {
 
-   
+
     /**
      * GeoTools Quickstart demo application. Prompts the user for a shapefile and displays its
      * contents on the screen in a map frame
@@ -59,71 +59,71 @@ public class SinglePoint {
         //String filename="/home/cbr/50m_cultural/WB_countries_Admin0_10m.shp";
         //String filename="/home/cbr/Unif2/50m_cultural/WB_countries_Admin0_10m.shp";
         String filename="/home/cbr/Unif2/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
-        
+
         //String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
         //String filename="/home/cbr/50m_cultural/ne_10m_admin_1_sel.shp";
-        
-        
+
+
         File file = new File(filename);
         if (!file.exists())
             throw new RuntimeException("Shapefile does not exist.");
-        
+
         FileDataStore store = FileDataStoreFinder.getDataStore(file);
         SimpleFeatureSource featureSource = store.getFeatureSource();
-        
+
         SimpleFeatureCollection all_features=featureSource.getFeatures();
-        
+
         store.dispose();
-        
+
         ReferencedEnvelope global_bounds = featureSource.getBounds();
-        
-        
+
+
         Random r = new Random();
-        
-        
+
+
         GeometryBuilder gb = new GeometryBuilder();
         //Point p = gb.point(152183, 167679);// Plaine
         //Point p = gb.point(4.4, 50.8);// 
         //Point p = gb.point(58.0, 47.0);
         //Point p = gb.point(10.6,59.9);// Oslo
-        
+
         Point p = gb.point(-70.9,-33.4);// Santiago
-        //Point p = gb.point(169.2, -52.5);//NZ
-        
-        //Point p = gb.point(172.97365198326708, 1.8869725782923172);
-        
-        
-        //Point p = gb.point(r.nextInt((int) global_bounds.getMinX(), (int) global_bounds.getMaxX()),
-                        //r.nextInt((int) global_bounds.getMinY(), (int) global_bounds.getMaxY()));
-        
+                                        //Point p = gb.point(169.2, -52.5);//NZ
+
+                                        //Point p = gb.point(172.97365198326708, 1.8869725782923172);
+
+
+                                        //Point p = gb.point(r.nextInt((int) global_bounds.getMinX(), (int) global_bounds.getMaxX()),
+                                        //r.nextInt((int) global_bounds.getMinY(), (int) global_bounds.getMaxY()));
+
         SimpleFeature target=null;
-        
+
         System.out.println(all_features.size()+" features");
 
         try ( SimpleFeatureIterator iterator = all_features.features() ){
             while( iterator.hasNext()){
-                 SimpleFeature feature = iterator.next();
-                 
-                 MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry();
-                 
-                 if (polygon != null && polygon.contains(p)) {
-                	 target = feature;
-                	 break;
-                 }
+                SimpleFeature feature = iterator.next();
+
+                MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry();
+
+                if (polygon != null && polygon.contains(p)) {
+                    target = feature;
+                    break;
+                }
             }
-         }
-        
-        if (target == null)
-        	System.out.println("Point not in any polygon!");
-        
-        else {
-        	for(Property prop: target.getProperties()) {
-        		if (prop.getName().toString() != "the_geom") {
-        		System.out.println(prop.getName()+": "+prop.getValue());
-        		}
-        	}
         }
-         
+
+        if (target == null)
+            System.out.println("Point not in any polygon!");
+
+        else {
+            for(Property prop: target.getProperties()) {
+                if (prop.getName().toString() != "the_geom") {
+                    System.out.println(prop.getName()+": "+prop.getValue());
+                }
+            }
+        }
+
         MapContent map = new MapContent();
         map.setTitle("Projet INFO-F203");
 
@@ -134,7 +134,7 @@ public class SinglePoint {
         ListFeatureCollection collection = new ListFeatureCollection(featureSource.getSchema());
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureSource.getSchema()); 
 
-        
+
         // Add target polygon
         collection.add(target);
 
@@ -142,24 +142,24 @@ public class SinglePoint {
         Polygon c= gb.circle(p.getX(), p.getY(), all_features.getBounds().getWidth()/200,10);
         featureBuilder.add(c);
         collection.add(featureBuilder.buildFeature(null));
-        
+
         // Add MBR
         if (target !=null) {
-	        featureBuilder.add(gb.box(target.getBounds().getMinX(),
-	        		target.getBounds().getMinY(),
-	        		target.getBounds().getMaxX(),
-	        		target.getBounds().getMaxY()
-	        		));
-	        
-	        //collection.add(featureBuilder.buildFeature(null));
-	        
-	        collection.add(featureBuilder.buildFeature(null));
+            featureBuilder.add(gb.box(target.getBounds().getMinX(),
+                        target.getBounds().getMinY(),
+                        target.getBounds().getMaxX(),
+                        target.getBounds().getMaxY()
+                        ));
+
+            //collection.add(featureBuilder.buildFeature(null));
+
+            collection.add(featureBuilder.buildFeature(null));
         }
-        
+
         Style style2 = SLD.createLineStyle(Color.red, 2.0f);
         Layer layer2 = new FeatureLayer(collection, style2);
         map.addLayer(layer2);
-       
+
         // Now display the map
         JMapFrame.showMap(map);
     }
