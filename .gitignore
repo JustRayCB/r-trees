@@ -23,3 +23,8 @@
 hs_err_pid*
 
 target/
+
+#Neovim workspace project management files
+.classpath
+.project
+.settings/
