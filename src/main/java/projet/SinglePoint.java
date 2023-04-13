@@ -24,6 +24,7 @@ import org.geotools.map.MapContent;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
 import org.geotools.swing.JMapFrame;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
@@ -76,8 +77,8 @@ public class SinglePoint {
         // Point p = gb.point(58.0, 47.0);
         // Point p = gb.point(10.6,59.9);// Oslo
 
-        // Point p = gb.point(-70.9, -33.4); // Santiago
-        // Point p = gb.point(169.2, -52.5);//NZ
+        Point p = gb.point(-70.9, -33.4); // Santiago
+                                          // Point p = gb.point(169.2, -52.5);//NZ
 
         // Point p = gb.point(172.97365198326708, 1.8869725782923172);
 
@@ -88,6 +89,7 @@ public class SinglePoint {
         SimpleFeature target = null;
 
         System.out.println(all_features.size() + " features");
+        System.out.println("Je print les coordonnées du point: " + p.getX() + " " + p.getY());
 
         try (SimpleFeatureIterator iterator = all_features.features()) {
             while (iterator.hasNext()) {
@@ -95,24 +97,29 @@ public class SinglePoint {
 
                 MultiPolygon polygon = (MultiPolygon)feature.getDefaultGeometry();
                 System.out.println("Name of polygone: " + feature.getAttribute("NAME_FR"));
-
-                // if (polygon != null && polygon.contains(p)) {
-                //     target = feature;
-                //     break;
-                // }
+                Envelope env = polygon.getEnvelopeInternal();
+                System.out.println("Envelope: minX = " + env.getMinX() +
+                                   ", minY =  " + env.getMinY() + ", maxX =  " + env.getMaxX() +
+                                   ", max Y =  " + env.getMaxY());
+                System.out.println("coordonnées du mbr : " + env.toString());
+                // System.out.println(env.expandToInclude());
+                if (polygon != null && polygon.contains(p)) {
+                    target = feature;
+                    break;
+                }
             }
         }
 
         if (target == null)
             System.out.println("Point not in any polygon!");
 
-        // else {
-        //     for (Property prop : target.getProperties()) {
-        //         if (prop.getName().toString() != "the_geom") {
-        //             System.out.println(prop.getName() + ": " + prop.getValue());
-        //         }
-        //     }
-        // }
+        else {
+            for (Property prop : target.getProperties()) {
+                if (prop.getName().toString() != "the_geom") {
+                    System.out.println(prop.getName() + ": " + prop.getValue());
+                }
+            }
+        }
 
         MapContent map = new MapContent();
         map.setTitle("Projet INFO-F203");
@@ -128,21 +135,20 @@ public class SinglePoint {
         collection.add(target);
 
         // Add Point
-        // Polygon c = gb.circle(p.getX(), p.getY(), all_features.getBounds().getWidth() / 200, 10);
-        // featureBuilder.add(c);
+        Polygon c = gb.circle(p.getX(), p.getY(), all_features.getBounds().getWidth() / 200, 10);
+        featureBuilder.add(c);
         collection.add(featureBuilder.buildFeature(null));
 
         // Add MBR
-        // if (target != null) {
-        //     featureBuilder.add(gb.box(target.getBounds().getMinX(), target.getBounds().getMinY(),
-        //                               target.getBounds().getMaxX(),
-        //                               target.getBounds().getMaxY()));
-        //
-        //     // collection.add(featureBuilder.buildFeature(null));
-        //
-        //     collection.add(featureBuilder.buildFeature(null));
-        // }
-        //
+        if (target != null) {
+            featureBuilder.add(gb.box(target.getBounds().getMinX(), target.getBounds().getMinY(),
+                                      target.getBounds().getMaxX(), target.getBounds().getMaxY()));
+
+            // collection.add(featureBuilder.buildFeature(null));
+
+            collection.add(featureBuilder.buildFeature(null));
+        }
+
         Style style2 = SLD.createLineStyle(Color.red, 2.0f);
         Layer layer2 = new FeatureLayer(collection, style2);
         map.addLayer(layer2);
