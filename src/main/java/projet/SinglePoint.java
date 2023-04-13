@@ -141,14 +141,33 @@ public class SinglePoint {
         collection.add(featureBuilder.buildFeature(null));
 
         // Add MBR
+        Envelope test = new Envelope(5, -5, 5, -5);
+        Envelope test1 = new Envelope(10, 15, 10, 15);
+        // Envelope test = new Envelope(-5, 5, -5, 5);
+        // make an Envelope 100x50 centered in the map
+        // Envelope test = new Envelope(-100, 100, -50, 50);
+        // Envelope test2 = test.copy();
+        Envelope test2 = new Envelope(test);
+        test2.expandToInclude(test1);
         if (target != null) {
             // featureBuilder.add(gb.box(target.getBounds().getMinX(), target.getBounds().getMinY(),
             //                           target.getBounds().getMaxX(),
             //                           target.getBounds().getMaxY()));
             featureBuilder.add(gb.box(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY()));
+            featureBuilder.add(
+                gb.box(test.getMinX(), test.getMinY(), test.getMaxX(), test.getMaxY()));
 
             // collection.add(featureBuilder.buildFeature(null));
 
+            collection.add(featureBuilder.buildFeature(null));
+            featureBuilder.add(
+                gb.box(test.getMinX(), test.getMinY(), test.getMaxX(), test.getMaxY()));
+            collection.add(featureBuilder.buildFeature(null));
+            featureBuilder.add(
+                gb.box(test1.getMinX(), test1.getMinY(), test1.getMaxX(), test1.getMaxY()));
+            collection.add(featureBuilder.buildFeature(null));
+            featureBuilder.add(
+                gb.box(test2.getMinX(), test2.getMinY(), test2.getMaxX(), test2.getMaxY()));
             collection.add(featureBuilder.buildFeature(null));
         }
 
