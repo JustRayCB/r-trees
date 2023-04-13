@@ -91,20 +91,21 @@ public class SinglePoint {
         System.out.println(all_features.size() + " features");
         System.out.println("Je print les coordonnées du point: " + p.getX() + " " + p.getY());
 
+        Envelope env = null;
         try (SimpleFeatureIterator iterator = all_features.features()) {
             while (iterator.hasNext()) {
                 SimpleFeature feature = iterator.next();
 
                 MultiPolygon polygon = (MultiPolygon)feature.getDefaultGeometry();
                 System.out.println("Name of polygone: " + feature.getAttribute("NAME_FR"));
-                Envelope env = polygon.getEnvelopeInternal();
-                System.out.println("Envelope: minX = " + env.getMinX() +
-                                   ", minY =  " + env.getMinY() + ", maxX =  " + env.getMaxX() +
-                                   ", max Y =  " + env.getMaxY());
-                System.out.println("coordonnées du mbr : " + env.toString());
                 // System.out.println(env.expandToInclude());
                 if (polygon != null && polygon.contains(p)) {
                     target = feature;
+                    env = polygon.getEnvelopeInternal();
+                    System.out.println("Envelope: minX = " + env.getMinX() +
+                                       ", minY =  " + env.getMinY() + ", maxX =  " + env.getMaxX() +
+                                       ", max Y =  " + env.getMaxY());
+                    System.out.println("coordonnées du mbr : " + env.toString());
                     break;
                 }
             }
@@ -132,7 +133,7 @@ public class SinglePoint {
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureSource.getSchema());
 
         // Add target polygon
-        collection.add(target);
+        collection.add(target); // pays
 
         // Add Point
         Polygon c = gb.circle(p.getX(), p.getY(), all_features.getBounds().getWidth() / 200, 10);
@@ -141,8 +142,10 @@ public class SinglePoint {
 
         // Add MBR
         if (target != null) {
-            featureBuilder.add(gb.box(target.getBounds().getMinX(), target.getBounds().getMinY(),
-                                      target.getBounds().getMaxX(), target.getBounds().getMaxY()));
+            // featureBuilder.add(gb.box(target.getBounds().getMinX(), target.getBounds().getMinY(),
+            //                           target.getBounds().getMaxX(),
+            //                           target.getBounds().getMaxY()));
+            featureBuilder.add(gb.box(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY()));
 
             // collection.add(featureBuilder.buildFeature(null));
 
