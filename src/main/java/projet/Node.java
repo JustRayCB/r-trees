@@ -13,7 +13,7 @@ abstract class Node {
     public Envelope getMbr() { return mbr; }
     public boolean isLeaf() { return isLeaf; }
     public abstract Node insert(Polygon polygon, String name);
-    public abstract void search(Point p);
+    public abstract Node search(Point p);
     public abstract void chooseNode();
     public abstract void addLeaf();
 }

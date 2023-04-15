@@ -25,7 +25,16 @@ class Leaf extends Node {
         return newNode;
     }
 
-    public void search(Point p) {}
+    public Node search(Point p) {
+        System.out.println("Searching inside " + name);
+        if (polygon.contains(p)) { // if the point in inside the polygon, it's inside the mbr too
+            System.out.println("Found " + name);
+            return this;
+        } else {
+            System.out.println("Not found");
+            return null;
+        }
+    }
     public void chooseNode() {}
     public void addLeaf() {}
 }

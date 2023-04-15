@@ -7,7 +7,13 @@ clean:
 
 
 # POUR RAYAN
-SinglePoint:
+singlePoint:
 	~/nvim.appimage src/main/java/projet/SinglePoint.java
 tree:
 	~/nvim.appimage src/main/java/projet/RTree.java
+node:
+	~/nvim.appimage src/main/java/projet/Node.java
+leaf:
+	~/nvim.appimage src/main/java/projet/Leaf.java
+internalNode:
+	~/nvim.appimage src/main/java/projet/InternalNode.java

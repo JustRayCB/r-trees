@@ -30,7 +30,19 @@ class InternalNode extends Node {
         }
     }
 
-    public void search(Point p) {}
+    public Node search(Point p) {
+        if (mbr.contains(p.getCoordinate())) { // if the point is inside the mbr
+            for (Node child : children) {
+                var result = child.search(p);
+                if (result != null) {
+                    return result;
+                } else {
+                    System.out.println("Not found");
+                }
+            }
+        } // if the point is not inside the mbr, it's not inside the node or his children
+        return null;
+    }
     public void chooseNode() {}
     public void addLeaf() {}
 }
