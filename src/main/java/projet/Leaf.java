@@ -15,6 +15,13 @@ class Leaf extends Node {
         this.mbr = polygon.getEnvelopeInternal();
         this.isLeaf = true;
     }
+
+    /**
+     * Insert a new polygon in the tree
+     * @param polygon the polygon to insert
+     * @param name the name of the polygon
+     * @return the new node
+     */
     public Node insert(Polygon polygon, String name) {
         if (this.polygon.equals(polygon)) {
             return this;
@@ -35,6 +42,7 @@ class Leaf extends Node {
             return null;
         }
     }
-    public void chooseNode() {}
+    public Node chooseNode(Node n, Polygon p) { return null; }
     public void addLeaf() {}
+    public void split() {}
 }

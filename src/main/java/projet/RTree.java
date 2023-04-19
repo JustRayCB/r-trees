@@ -12,8 +12,6 @@ public class RTree {
         root = null;
     }
 
-    // public int getNbrNodes() { return nbrNodes; }
-
     public void insert(Polygon polygon, String name) {
         System.out.println("The number of nodes is " + nbrNodes);
         if (root == null) {
@@ -32,6 +30,8 @@ public class RTree {
             return null;
         }
     }
-    public void chooseNode() {}
+
+    public Node chooseNode() { return root.chooseNode(null, null); }
+
     public void addLeaf() {}
 }
