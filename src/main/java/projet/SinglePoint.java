@@ -54,7 +54,9 @@ public class SinglePoint {
         // String filename = "/home/cbr/Unif2/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
         // String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
         // String filename="/home/cbr/50m_cultural/ne_10m_admin_1_sel.shp";
-        String filename = "../../../../WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        // String filename = "../../../../WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        String filename = "WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        //"../../../../WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
 
         File file = new File(filename);
         if (!file.exists())
