@@ -52,7 +52,6 @@ public class SinglePoint {
         // String filename="/home/cbr/50m_cultural/WB_countries_Admin0_10m.shp";
         // String filename="/home/cbr/Unif2/50m_cultural/WB_countries_Admin0_10m.shp";
         String filename = "/home/cbr/Unif2/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
-
         // String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
         // String filename="/home/cbr/50m_cultural/ne_10m_admin_1_sel.shp";
 
@@ -95,27 +94,38 @@ public class SinglePoint {
         try (SimpleFeatureIterator iterator = all_features.features()) {
             while (iterator.hasNext()) {
                 SimpleFeature feature = iterator.next();
-
+                //
                 MultiPolygon polygon = (MultiPolygon)feature.getDefaultGeometry();
-                System.out.println("Name of polygone: " + feature.getAttribute("NAME_FR"));
-                // var tesst = feature.getNbGeometries();
-                int test = polygon.getNumGeometries();
-                System.out.println("Nombre de polygones: " + test);
-                for (int i = 0; i < test; i++) {
-                    Polygon poly = (Polygon)polygon.getGeometryN(i);
-                    Envelope env2 = poly.getEnvelopeInternal();
-                }
-
-                // System.out.println(env.expandToInclude());
-                if (polygon != null && polygon.contains(p)) {
+                System.out.println("Name of the polygone: " + feature.getAttribute("NAME_FR"));
+                String s = feature.getAttribute("NAME_FR").toString();
+                System.out.println("This is the string I got : " + s);
+                // if the name of the feature is France then break
+                if (s.equals("France")) {
+                    System.out.println("I found France");
                     target = feature;
                     env = polygon.getEnvelopeInternal();
-                    System.out.println("Envelope: minX = " + env.getMinX() +
-                                       ", minY =  " + env.getMinY() + ", maxX =  " + env.getMaxX() +
-                                       ", max Y =  " + env.getMaxY());
-                    System.out.println("coordonnées du mbr : " + env.toString());
                     break;
                 }
+                // System.out.println("Name of polygone: " + feature.getAttribute("NAME_FR"));
+                // // var tesst = feature.getNbGeometries();
+                // int test = polygon.getNumGeometries();
+                // System.out.println("Nombre de polygones: " + test);
+                // for (int i = 0; i < test; i++) {
+                //     Polygon poly = (Polygon)polygon.getGeometryN(i);
+                //     Envelope env2 = poly.getEnvelopeInternal();
+                // }
+                //
+                // // System.out.println(env.expandToInclude());
+                // if (polygon != null && polygon.contains(p)) {
+                //     target = feature;
+                //     env = polygon.getEnvelopeInternal();
+                //     System.out.println("Envelope: minX = " + env.getMinX() +
+                //                        ", minY =  " + env.getMinY() + ", maxX =  " +
+                //                        env.getMaxX() +
+                //                        ", max Y =  " + env.getMaxY());
+                //     System.out.println("coordonnées du mbr : " + env.toString());
+                //     break;
+                // }
             }
         }
 
@@ -149,34 +159,27 @@ public class SinglePoint {
         collection.add(featureBuilder.buildFeature(null));
 
         // Add MBR
-        Envelope test = new Envelope(5, -5, 5, -5);
-        Envelope test1 = new Envelope(10, 15, 10, 15);
+        // Envelope test = new Envelope(5, -5, 5, -5);
+        // Envelope test1 = new Envelope(10, 15, 10, 15);
         // Envelope test = new Envelope(-5, 5, -5, 5);
         // make an Envelope 100x50 centered in the map
         // Envelope test = new Envelope(-100, 100, -50, 50);
         // Envelope test2 = test.copy();
-        Envelope test2 = new Envelope(test);
-        test2.expandToInclude(test1);
+        // Envelope test2 = new Envelope(test);
+        // test2.expandToInclude(test1);
         if (target != null) {
-            // featureBuilder.add(gb.box(target.getBounds().getMinX(), target.getBounds().getMinY(),
-            //                           target.getBounds().getMaxX(),
-            //                           target.getBounds().getMaxY()));
-            featureBuilder.add(gb.box(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY()));
-            featureBuilder.add(
-                gb.box(test.getMinX(), test.getMinY(), test.getMaxX(), test.getMaxY()));
-
-            // collection.add(featureBuilder.buildFeature(null));
-
-            collection.add(featureBuilder.buildFeature(null));
-            featureBuilder.add(
-                gb.box(test.getMinX(), test.getMinY(), test.getMaxX(), test.getMaxY()));
-            collection.add(featureBuilder.buildFeature(null));
-            featureBuilder.add(
-                gb.box(test1.getMinX(), test1.getMinY(), test1.getMaxX(), test1.getMaxY()));
-            collection.add(featureBuilder.buildFeature(null));
-            featureBuilder.add(
-                gb.box(test2.getMinX(), test2.getMinY(), test2.getMaxX(), test2.getMaxY()));
-            collection.add(featureBuilder.buildFeature(null));
+            // featureBuilder.add(gb.box(env.getMinX(), env.getMinY(), env.getMaxX(),
+            // env.getMaxY())); collection.add(featureBuilder.buildFeature(null));
+            MultiPolygon multiPolygon = (MultiPolygon)target.getDefaultGeometry();
+            for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
+                Polygon poly = (Polygon)multiPolygon.getGeometryN(i);
+                Envelope env2 = poly.getEnvelopeInternal();
+                featureBuilder.add(
+                    gb.box(env2.getMinX(), env2.getMinY(), env2.getMaxX(), env2.getMaxY()));
+                collection.add(featureBuilder.buildFeature(null));
+                // print the name of poly
+                System.out.println("Name of the polygone: " + target.getAttribute("NAME_FR"));
+            }
         }
 
         Style style2 = SLD.createLineStyle(Color.red, 2.0f);
