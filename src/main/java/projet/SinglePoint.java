@@ -98,6 +98,14 @@ public class SinglePoint {
 
                 MultiPolygon polygon = (MultiPolygon)feature.getDefaultGeometry();
                 System.out.println("Name of polygone: " + feature.getAttribute("NAME_FR"));
+                // var tesst = feature.getNbGeometries();
+                int test = polygon.getNumGeometries();
+                System.out.println("Nombre de polygones: " + test);
+                for (int i = 0; i < test; i++) {
+                    Polygon poly = (Polygon)polygon.getGeometryN(i);
+                    Envelope env2 = poly.getEnvelopeInternal();
+                }
+
                 // System.out.println(env.expandToInclude());
                 if (polygon != null && polygon.contains(p)) {
                     target = feature;
