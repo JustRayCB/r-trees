@@ -10,24 +10,8 @@ import org.locationtech.jts.geom.Polygon;
 class InternalNode extends Node {
     private ArrayList<Node> children;
 
-    public Node insert(Polygon polygon, String name) {
-        Node newNode = null;
-        for (Node child : children) {
-            if (child.getMbr().contains(polygon.getEnvelopeInternal())) {
-                newNode = child.insert(polygon, name);
-                break;
-            }
-        }
-        if (newNode == null) {
-            newNode = new Leaf(polygon, name);
-        }
-        if (children.size() < MAX_CHILDREN) {
-            children.add(newNode);
-            return this;
-        } else {
-            // return split(newNode);
-            return null;
-        }
+    public InternalNode(Envelope mbr) {
+        super(mbr, false);
     }
 
     public Node search(Point p) {
@@ -44,15 +28,33 @@ class InternalNode extends Node {
         return null;
     }
 
-    public Node chooseNode(Node n, Polygon p) {
-        for (Node child : children) {
-            Envelope extandedMbr = mbr.copy();
-            extandedMbr.expandToInclude(child.getMbr());
+    public Node chooseNode(Polygon p) {
+        // we need to stop to the node that have leaves as children
+        boolean childIsLeaf = false;
+        if (children.size() >= 1 && children.get(0).isLeaf()) {
+            childIsLeaf = true; // if childisLeaf is true, we will insert the new node inside the current one
         }
-        return null;
+        if (childIsLeaf) {
+            return this;
+        } // else
+          // we need to find the child that will minimize the increase of the MBR on
+          // insertion
+        ArrayList<Double> insertionArea = new ArrayList<Double>();
+        for (Node child : children) {
+            Envelope childMbr = child.mbr;
+            double areaMbr = childMbr.getArea();
+            Envelope insertionMbr = new Envelope(childMbr);
+            insertionMbr.expandToInclude(p.getCoordinate());
+            double areaInsertionMbr = insertionMbr.getArea();
+            insertionArea.add(areaInsertionMbr - areaMbr);
+        }
+        return children.get(insertionArea.indexOf(insertionArea.stream().min(Double::compare).get()))
+                .chooseNode(p);
     }
 
-    public void addLeaf() {}
+    public void addLeaf() {
+    }
 
-    public void split() {}
+    public void split() {
+    }
 }

@@ -1,6 +1,7 @@
 package projet;
+
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+// import org.locationtech.jts.geom.Polygon;
 
 public class RTree {
 
@@ -8,18 +9,8 @@ public class RTree {
     private Node root;
 
     public RTree() {
-        nbrNodes = 0;
-        root = null;
-    }
-
-    public void insert(Polygon polygon, String name) {
-        System.out.println("The number of nodes is " + nbrNodes);
-        if (root == null) {
-            root = new Leaf(polygon, name);
-        } else {
-            root = root.insert(polygon, name);
-        }
-        nbrNodes++;
+        this.nbrNodes = 0;
+        this.root = null;
     }
 
     public Node search(Point p) {
@@ -31,7 +22,15 @@ public class RTree {
         }
     }
 
-    public Node chooseNode() { return root.chooseNode(null, null); }
+    public Node chooseNode() {
+        return root.chooseNode(null);
+    }
 
-    public void addLeaf() {}
+    public void addLeaf() {
+        nbrNodes++;
+    }
+
+    public int getNbrNodes() {
+        return nbrNodes;
+    }
 }
