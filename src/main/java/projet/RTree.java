@@ -27,6 +27,7 @@ public class RTree {
     }
 
     public void addLeaf() {
+        root.addLeaf();
         nbrNodes++;
     }
 

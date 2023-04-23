@@ -34,6 +34,9 @@ class Leaf extends Node {
     public void addLeaf() {
     }
 
-    public void split() {
+    public void quadraticSplit() {
+    }
+
+    public void linearSplit() {
     }
 }

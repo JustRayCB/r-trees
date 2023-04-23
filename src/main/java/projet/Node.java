@@ -9,6 +9,7 @@ abstract class Node {
     protected Envelope mbr;
     protected boolean isLeaf;
     protected static final int MAX_CHILDREN = 4;
+    protected static final String SPLIT_METHOD = "quadratic";
 
     public Node(Envelope MBR, boolean isleaf) {
         this.mbr = MBR;
@@ -45,5 +46,16 @@ abstract class Node {
      */
     public abstract void addLeaf();
 
-    public abstract void split();
+    // public void split();
+    public void split() {
+        if (SPLIT_METHOD == "quadratic") {
+            this.quadraticSplit();
+        } else {
+            this.linearSplit();
+        }
+    }
+
+    public abstract void quadraticSplit();
+
+    public abstract void linearSplit();
 }
