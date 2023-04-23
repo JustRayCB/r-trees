@@ -1,16 +1,18 @@
 package projet;
 
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 // import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.Polygon;
 
 public class RTree {
 
     private int nbrNodes;
-    private Node root;
+    private Node root; // maybe we need to make a default root
 
     public RTree() {
         this.nbrNodes = 0;
-        this.root = null;
+        this.root = new InternalNode(new Envelope()); // default root
     }
 
     public Node search(Point p) {
@@ -26,8 +28,8 @@ public class RTree {
         return root.chooseNode(null);
     }
 
-    public void addLeaf() {
-        root.addLeaf();
+    public void addLeaf(Polygon polygon, String label) {
+        root.addLeaf(polygon, label);
         nbrNodes++;
     }
 

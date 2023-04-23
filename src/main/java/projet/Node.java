@@ -27,35 +27,37 @@ abstract class Node {
     /**
      * Search for a point in the current Node
      * 
-     * @param p the point to search
+     * @param p : the point to search
      * @return the node containing the point, or null if it's not found
      */
     public abstract Node search(Point p);
 
-    /*
-     * @brief: Searche an insertion node for wich the insertion of the new polygone
-     * will minimize the increase of the MBR
+    /**
+     * @brief: Search an insertion node for wich the insertion of the new polygone
+     *         will minimize the increase of the MBR
      * 
-     * @param: p the new polygon to insert
+     * @param p : the new polygon to insert
      */
     public abstract Node chooseNode(Polygon p);
 
-    /*
+    /**
      * @brief: Add a new leaf for the current node if the node is full
-     * (i.e. if it has MAX_CHILDREN children)
+     *         (i.e. if it has MAX_CHILDREN children)
      */
-    public abstract void addLeaf();
+    public abstract Node addLeaf(Polygon polygon, String label);
 
-    // public void split();
-    public void split() {
+    /**
+     * @brief: Function that will split the node with the quadratic or linear split
+     */
+    public Node split() {
         if (SPLIT_METHOD == "quadratic") {
-            this.quadraticSplit();
+            return this.quadraticSplit();
         } else {
-            this.linearSplit();
+            return this.linearSplit();
         }
     }
 
-    public abstract void quadraticSplit();
+    public abstract Node quadraticSplit();
 
-    public abstract void linearSplit();
+    public abstract Node linearSplit();
 }

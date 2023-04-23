@@ -12,6 +12,7 @@ class InternalNode extends Node {
 
     public InternalNode(Envelope mbr) {
         super(mbr, false);
+        children = new ArrayList<Node>();
     }
 
     public Node search(Point p) {
@@ -30,35 +31,51 @@ class InternalNode extends Node {
 
     public Node chooseNode(Polygon p) {
         // we need to stop to the node that have leaves as children
-        boolean childIsLeaf = false;
         if (children.size() >= 1 && children.get(0).isLeaf()) {
-            childIsLeaf = true; // if childisLeaf is true, we will insert the new node inside the current one
+            return this;// if childisLeaf is true, we will insert the new node inside the current one
         }
-        if (childIsLeaf) {
-            return this;
-        } // else
-          // we need to find the child that will minimize the increase of the MBR on
-          // insertion
+        // we need to find the child that will minimize the increase of the MBR on
+        // insertion
         ArrayList<Double> insertionArea = new ArrayList<Double>();
         for (Node child : children) {
             Envelope childMbr = child.mbr;
-            double areaMbr = childMbr.getArea();
+            double areaMbr = childMbr.getArea(); // area(mbr)
             Envelope insertionMbr = new Envelope(childMbr);
             insertionMbr.expandToInclude(p.getCoordinate());
-            double areaInsertionMbr = insertionMbr.getArea();
-            insertionArea.add(areaInsertionMbr - areaMbr);
+            double areaInsertionMbr = insertionMbr.getArea(); // area(mbr U p)
+            insertionArea.add(areaInsertionMbr - areaMbr); // area(mbr U p) - area(mbr)
         }
-        return children.get(insertionArea.indexOf(insertionArea.stream().min(Double::compare).get()))
-                .chooseNode(p);
+        // return
+        // children.get(insertionArea.indexOf(insertionArea.stream().min(Double::compare).get()))
+        // .chooseNode(p);
+        return children.get(insertionArea.indexOf(insertionArea.stream().min(Double::compare).get()));
     }
 
-    public void addLeaf() {
+    public Node addLeaf(Polygon polygon, String label) {
+        if (children.size() == 0 || children.get(0).isLeaf()) { // bottom level is reached -> Create Leaf
+            children.add(new Leaf(polygon, label));
+        } else {// still need to go deeper
+            Node n = this.chooseNode(polygon);
+            Node newNode = n.addLeaf(polygon, label);
+            if (newNode == null) {
+                // a split occured in addLeaf
+                // a new node is added at this level
+                children.add(newNode);
+            }
+        }
+        mbr.expandToInclude(polygon.getCoordinate());
+        if (children.size() >= MAX_CHILDREN) {
+            return split();
+        }
+        return null;
 
     }
 
-    public void quadraticSplit() {
+    public Node quadraticSplit() {
+        return null;
     }
 
-    public void linearSplit() {
+    public Node linearSplit() {
+        return null;
     }
 }

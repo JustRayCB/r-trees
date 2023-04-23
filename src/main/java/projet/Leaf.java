@@ -31,12 +31,18 @@ class Leaf extends Node {
         return this;
     }
 
-    public void addLeaf() {
+    public Node addLeaf(Polygon polygon, String label) {
+        System.out.println("Adding a leaf to a leaf " + name + " !!! not normal");
+        return null;
     }
 
-    public void quadraticSplit() {
+    public Node quadraticSplit() {
+        System.out.println("Quadratic split on a leaf " + name + " !!! not normal");
+        return null;
     }
 
-    public void linearSplit() {
+    public Node linearSplit() {
+        System.out.println("Linear split on a leaf " + name + " !!! not normal");
+        return null;
     }
 }
