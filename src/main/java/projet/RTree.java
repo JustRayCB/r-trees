@@ -1,6 +1,7 @@
 package projet;
 
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 // import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Polygon;
@@ -28,9 +29,27 @@ public class RTree {
         return root.chooseNode(null);
     }
 
+    /**
+     * @brief : Add a leaf to the R-Tree
+     * @param polygon : Polygon we want to add the the R-Tree
+     * @param label   : Name of the polygon
+     */
     public void addLeaf(Polygon polygon, String label) {
         root.addLeaf(polygon, label);
         nbrNodes++;
+    }
+
+    /**
+     * @brief : Same as above with a MultiPolygon which is a polygon that contains
+     *        other polygons
+     *        Ex: France, Spain, ...
+     * @param multi : MultiPolygon we want to add to the R-Tree
+     * @param label : Name of the MultiPolygon
+     */
+    public void addLeaf(MultiPolygon multi, String label) {
+        for (int polygon = 0; polygon < multi.getNumGeometries(); polygon++) {
+            addLeaf((Polygon) multi.getGeometryN(polygon), label);
+        }
     }
 
     public int getNbrNodes() {
