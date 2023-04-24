@@ -47,6 +47,7 @@ public class RTree {
      * @param label : Name of the MultiPolygon
      */
     public void addLeaf(MultiPolygon multi, String label) {
+        // Méthode proposée par Ziyad Haltout Rhouni
         for (int polygon = 0; polygon < multi.getNumGeometries(); polygon++) {
             addLeaf((Polygon) multi.getGeometryN(polygon), label);
         }

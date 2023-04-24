@@ -72,6 +72,12 @@ class InternalNode extends Node {
     }
 
     public Node quadraticSplit() {
+        // quadratic split for r-tree node
+        // we need to find the two nodes that will maximize the area of the mbr
+        // of the two nodes
+        // we will use the same method as chooseNode
+        // but we will return the two nodes that maximize the area of the mbr
+        // of the two nodes
         return null;
     }
 

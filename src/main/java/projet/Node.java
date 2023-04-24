@@ -9,6 +9,7 @@ abstract class Node {
     protected Envelope mbr;
     protected boolean isLeaf;
     protected static final int MAX_CHILDREN = 4;
+    protected static final int MIN_CHILDREN = 2;
     protected static final String SPLIT_METHOD = "quadratic";
 
     public Node(Envelope MBR, boolean isleaf) {
