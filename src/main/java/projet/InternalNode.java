@@ -2,6 +2,8 @@
 package projet;
 
 import java.util.ArrayList;
+
+import org.javatuples.Pair;
 import org.locationtech.jts.geom.Envelope;
 // import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
@@ -78,8 +80,68 @@ class InternalNode extends Node {
         // we will use the same method as chooseNode
         // but we will return the two nodes that maximize the area of the mbr
         // of the two nodes
+
+        // select the first two nodes to make a good split
+        Pair<Node, Node> groups = pickSeeds();
+        ArrayList<Node> groupA = new ArrayList<Node>(null);
+        ArrayList<Node> groupB = new ArrayList<Node>(null);
+
+        groupA.add(groups.getValue0());
+        groupB.add(groups.getValue1());
+
+        int nodeToIntegrate = children.size() - 2; // rest n-2 children to place in the right group
+
+        for (Node child : children) {
+            // if node is not ont of the two pre-selected node
+            if (child != groups.getValue0() && child != groups.getValue1()) {
+                // check if the minimum number of children is respected :
+                // if you have minimum nodes to integrate in a group to maintain the minimum
+                // number right, you just put them in the group
+                if ((groupA.size() + nodeToIntegrate) <= child.MIN_CHILDREN) {
+                    groupA.add(child);
+                } else if ((groupB.size() + nodeToIntegrate) <= child.MIN_CHILDREN) {
+                    groupB.add(child);
+                } else {
+                    
+                }
+
+            }
+            nodeToIntegrate--;
+        }
+        // every child is in a group
+
+
+
         return null;
     }
+
+    public Pair<Node, Node> pickSeeds() {
+        double maxArea = 0;
+        Pair<Node, Node> bestPair = new Pair<Node,Node>(null,null);
+        for (int i = 0; i < children.size(); i++) {
+            for (int j = i + 1; j < children.size(); j++) {
+                Node node1 = children.get(i);
+                Node node2 = children.get(j);
+                Envelope mbr1 = node1.getMbr();
+                Envelope mbr2 = node2.getMbr();
+                Envelope bigArea = new Envelope(mbr1);
+                bigArea.expandToInclude(mbr2);
+                double area = bigArea.getArea() - mbr1.getArea() - mbr2.getArea();
+                if (area > maxArea) {   
+                    maxArea = area;
+                    bestPair.addAt0(node1);
+                    bestPair.addAt1(node1);
+                }
+            }
+        }
+        return bestPair;
+    }
+
+    public Node pickNext() {
+        return null;
+    }
+
+    public 
 
     public Node linearSplit() {
         return null;
