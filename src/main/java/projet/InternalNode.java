@@ -85,30 +85,50 @@ class InternalNode extends Node {
         Pair<Node, Node> groups = pickSeeds();
         ArrayList<Node> groupA = new ArrayList<Node>(null);
         ArrayList<Node> groupB = new ArrayList<Node>(null);
+        // remove the two nodes from the children list
+        children.remove(groups.getValue0());
+        children.remove(groups.getValue1());
 
         groupA.add(groups.getValue0());
         groupB.add(groups.getValue1());
 
-        int nodeToIntegrate = children.size() - 2; // rest n-2 children to place in the right group
+        int nodeToIntegrate = children.size() - 2; // n-2 children remainings to place in the right group
+        while (nodeToIntegrate > 0) {
+            // if one group has so many nodes that all the rest must be assigned to it in
+            // order for it to have the minimum number m, assign them and stop
+            if (groupA.size() + nodeToIntegrate == MIN_CHILDREN) {
+                groupA.addAll(children.subList(children.size() - nodeToIntegrate, children.size()));
+                break;
+            } else if (groupB.size() + nodeToIntegrate == MIN_CHILDREN) {
+                groupB.addAll(children.subList(children.size() - nodeToIntegrate, children.size()));
+                break;
+            }
 
-        for (Node child : children) {
-            // if node is not ont of the two pre-selected node
-            if (child != groups.getValue0() && child != groups.getValue1()) {
-                // check if the minimum number of children is respected :
-                // if you have minimum nodes to integrate in a group to maintain the minimum
-                // number right, you just put them in the group
-                if ((groupA.size() + nodeToIntegrate) <= MIN_CHILDREN) {
-                    groupA.add(child);
-                } else if ((groupB.size() + nodeToIntegrate) <= MIN_CHILDREN) {
-                    groupB.add(child);
+            // else, choose the node that will increase the area of the mbr the least
+            // if the area increase is the same for both groups, choose the one with the
+            // smallest area
+            Node nodeToPlace = pickNext();
+            Envelope mbrA = groupA.get(0).getMbr();
+            Envelope mbrB = groupB.get(0).getMbr();
+            Envelope mbrAWithNode = new Envelope(mbrA);
+            Envelope mbrBWithNode = new Envelope(mbrB);
+            mbrAWithNode.expandToInclude(nodeToPlace.getMbr());
+            mbrBWithNode.expandToInclude(nodeToPlace.getMbr());
+            double areaIncreaseA = mbrAWithNode.getArea() - mbrA.getArea();
+            double areaIncreaseB = mbrBWithNode.getArea() - mbrB.getArea();
+            if (areaIncreaseA < areaIncreaseB) {
+                groupA.add(nodeToPlace);
+            } else if (areaIncreaseA > areaIncreaseB) {
+                groupB.add(nodeToPlace);
+            } else {
+                if (mbrA.getArea() < mbrB.getArea()) {
+                    groupA.add(nodeToPlace);
                 } else {
-
+                    groupB.add(nodeToPlace);
                 }
-
             }
             nodeToIntegrate--;
         }
-        // every child is in a group
 
         return null;
     }
