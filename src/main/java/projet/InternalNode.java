@@ -142,4 +142,8 @@ class InternalNode extends Node {
     public Node linearSplit() {
         return null;
     }
+
+    public ArrayList<Node> getChildren() {
+        return children;
+    }
 }

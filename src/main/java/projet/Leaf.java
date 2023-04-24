@@ -45,4 +45,8 @@ class Leaf extends Node {
         System.out.println("Linear split on a leaf " + name + " !!! not normal");
         return null;
     }
+
+    public String toString() {
+        return name;
+    }
 }
