@@ -74,6 +74,16 @@ class InternalNode extends Node {
 
     }
 
+    private void addToA(Node nodeToPlace, Envelope mbrA, Envelope mbrAWithNode, ArrayList<Node> groupA) {
+        groupA.add(nodeToPlace);
+        mbrA = mbrAWithNode;
+    }
+
+    private void addToB(Node nodeToPlace, Envelope mbrB, Envelope mbrBWithNode, ArrayList<Node> groupB) {
+        groupB.add(nodeToPlace);
+        mbrB = mbrBWithNode;
+    }
+
     public Node quadraticSplit() {
         // quadratic split for r-tree node
         // we need to find the two nodes that will maximize the area of the mbr
@@ -118,30 +128,27 @@ class InternalNode extends Node {
             double areaIncreaseA = mbrAWithNode.getArea() - mbrA.getArea();
             double areaIncreaseB = mbrBWithNode.getArea() - mbrB.getArea();
             if (areaIncreaseA < areaIncreaseB) {
-                groupA.add(nodeToPlace);
-                mbrA = mbrAWithNode;
+                addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
             } else if (areaIncreaseA > areaIncreaseB) {
-                groupB.add(nodeToPlace);
-                mbrB = mbrBWithNode;
+                addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
             } else {
                 // if equals, choose the group with the smallest area
                 if (mbrA.getArea() < mbrB.getArea()) {
-                    groupA.add(nodeToPlace);
+                    addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
                 } else if (mbrA.getArea() > mbrB.getArea()) {
-                    groupB.add(nodeToPlace);
+                    addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
                 } else if (groupA.size() < groupB.size()) {
-                    groupA.add(nodeToPlace);
+                    addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
                 } else if (groupA.size() > groupB.size()) {
-                    groupB.add(nodeToPlace);
+                    addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
                 } else {
                     // pick a random int number
                     Random rand = new Random();
                     if (rand.nextInt(2) == 0) {
-                        groupA.add(nodeToPlace);
+                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
                     } else {
-                        groupB.add(nodeToPlace);
+                        addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
                     }
-
                 }
 
             }
@@ -149,16 +156,6 @@ class InternalNode extends Node {
         }
 
         return null;
-    }
-
-    private void addToA(Node nodeToPlace, Envelope mbrA, Envelope mbrAWithNode, ArrayList<Node> groupA) {
-        groupA.add(nodeToPlace);
-        mbrA = mbrAWithNode;
-    }
-
-    private void addToB(Node nodeToPlace, Envelope mbrB, Envelope mbrBWithNode, ArrayList<Node> groupB) {
-        groupB.add(nodeToPlace);
-        mbrB = mbrBWithNode;
     }
 
     private Pair<Node, Node> pickSeeds() {
