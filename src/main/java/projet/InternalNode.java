@@ -85,20 +85,11 @@ class InternalNode extends Node {
     }
 
     public Node quadraticSplit() {
-        // quadratic split for r-tree node
-        // we need to find the two nodes that will maximize the area of the mbr
-        // of the two nodes
-        // we will use the same method as chooseNode
-        // but we will return the two nodes that maximize the area of the mbr
-        // of the two nodes
-
-        // select the first two nodes to make a good split
         Pair<Node, Node> groups = pickSeeds();
         ArrayList<Node> groupA = new ArrayList<Node>(null);
         ArrayList<Node> groupB = new ArrayList<Node>(null);
         Envelope mbrA = new Envelope(groups.getValue0().getMbr());
         Envelope mbrB = new Envelope(groups.getValue1().getMbr());
-        // remove the two nodes from the children list
         children.remove(groups.getValue0());
         children.remove(groups.getValue1());
 
@@ -110,52 +101,62 @@ class InternalNode extends Node {
             // if one group has so many nodes that all the rest must be assigned to it in
             // order for it to have the minimum number m, assign them and stop
             if (groupA.size() + nodeToIntegrate == MIN_CHILDREN) {
-                groupA.addAll(children.subList(children.size() - nodeToIntegrate, children.size()));
+                for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
+                    groupA.add(children.get(i));
+                    mbrA.expandToInclude(children.get(i).getMbr());
+                }
                 break;
             } else if (groupB.size() + nodeToIntegrate == MIN_CHILDREN) {
-                groupB.addAll(children.subList(children.size() - nodeToIntegrate, children.size()));
+                for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
+                    groupB.add(children.get(i));
+                    mbrB.expandToInclude(children.get(i).getMbr());
+                }
                 break;
-            }
-
-            // else, choose the node that will increase the area of the mbr the least
-            // if the area increase is the same for both groups, choose the one with the
-            // smallest area
-            Node nodeToPlace = pickNext();
-            Envelope mbrAWithNode = new Envelope(mbrA);
-            Envelope mbrBWithNode = new Envelope(mbrB);
-            mbrAWithNode.expandToInclude(nodeToPlace.getMbr());
-            mbrBWithNode.expandToInclude(nodeToPlace.getMbr());
-            double areaIncreaseA = mbrAWithNode.getArea() - mbrA.getArea();
-            double areaIncreaseB = mbrBWithNode.getArea() - mbrB.getArea();
-            if (areaIncreaseA < areaIncreaseB) {
-                addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-            } else if (areaIncreaseA > areaIncreaseB) {
-                addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
             } else {
-                // if equals, choose the group with the smallest area
-                if (mbrA.getArea() < mbrB.getArea()) {
+
+                // else, choose the node that will increase the area of the mbr the least
+                // if the area increase is the same for both groups, choose the one with the
+                // smallest area, then the one with the fewest nodes, then randomly choosing
+                Node nodeToPlace = pickNext();
+                Envelope mbrAWithNode = new Envelope(mbrA);
+                Envelope mbrBWithNode = new Envelope(mbrB);
+                mbrAWithNode.expandToInclude(nodeToPlace.getMbr());
+                mbrBWithNode.expandToInclude(nodeToPlace.getMbr());
+                double areaIncreaseA = mbrAWithNode.getArea() - mbrA.getArea();
+                double areaIncreaseB = mbrBWithNode.getArea() - mbrB.getArea();
+                if (areaIncreaseA < areaIncreaseB) {
                     addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                } else if (mbrA.getArea() > mbrB.getArea()) {
-                    addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
-                } else if (groupA.size() < groupB.size()) {
-                    addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                } else if (groupA.size() > groupB.size()) {
+                } else if (areaIncreaseA > areaIncreaseB) {
                     addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
                 } else {
-                    // pick a random int number
-                    Random rand = new Random();
-                    if (rand.nextInt(2) == 0) {
+                    if (mbrA.getArea() < mbrB.getArea()) {
                         addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                    } else {
+                    } else if (mbrA.getArea() > mbrB.getArea()) {
                         addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                    } else if (groupA.size() < groupB.size()) {
+                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                    } else if (groupA.size() > groupB.size()) {
+                        addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                    } else {
+                        Random rand = new Random();
+                        if (rand.nextInt(2) == 0) {
+                            addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                        } else {
+                            addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                        }
                     }
-                }
 
+                }
             }
             nodeToIntegrate--;
         }
-
-        return null;
+        // creation of the two new nodes
+        children = groupA;
+        mbr = mbrA;
+        InternalNode newNode = new InternalNode(mbrB);
+        newNode.children = groupB;
+        newNode.mbr = mbrB;
+        return newNode;
     }
 
     private Pair<Node, Node> pickSeeds() {
