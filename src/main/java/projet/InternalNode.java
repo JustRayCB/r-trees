@@ -97,12 +97,12 @@ class InternalNode extends Node {
                 // check if the minimum number of children is respected :
                 // if you have minimum nodes to integrate in a group to maintain the minimum
                 // number right, you just put them in the group
-                if ((groupA.size() + nodeToIntegrate) <= child.MIN_CHILDREN) {
+                if ((groupA.size() + nodeToIntegrate) <= MIN_CHILDREN) {
                     groupA.add(child);
-                } else if ((groupB.size() + nodeToIntegrate) <= child.MIN_CHILDREN) {
+                } else if ((groupB.size() + nodeToIntegrate) <= MIN_CHILDREN) {
                     groupB.add(child);
                 } else {
-                    
+
                 }
 
             }
@@ -110,14 +110,12 @@ class InternalNode extends Node {
         }
         // every child is in a group
 
-
-
         return null;
     }
 
     public Pair<Node, Node> pickSeeds() {
         double maxArea = 0;
-        Pair<Node, Node> bestPair = new Pair<Node,Node>(null,null);
+        Pair<Node, Node> bestPair = new Pair<Node, Node>(null, null);
         for (int i = 0; i < children.size(); i++) {
             for (int j = i + 1; j < children.size(); j++) {
                 Node node1 = children.get(i);
@@ -127,7 +125,7 @@ class InternalNode extends Node {
                 Envelope bigArea = new Envelope(mbr1);
                 bigArea.expandToInclude(mbr2);
                 double area = bigArea.getArea() - mbr1.getArea() - mbr2.getArea();
-                if (area > maxArea) {   
+                if (area > maxArea) {
                     maxArea = area;
                     bestPair.addAt0(node1);
                     bestPair.addAt1(node1);
@@ -140,8 +138,6 @@ class InternalNode extends Node {
     public Node pickNext() {
         return null;
     }
-
-    public 
 
     public Node linearSplit() {
         return null;
