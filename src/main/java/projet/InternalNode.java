@@ -113,7 +113,7 @@ class InternalNode extends Node {
         return null;
     }
 
-    public Pair<Node, Node> pickSeeds() {
+    private Pair<Node, Node> pickSeeds() {
         double maxArea = 0;
         Pair<Node, Node> bestPair = new Pair<Node, Node>(null, null);
         for (int i = 0; i < children.size(); i++) {
@@ -135,7 +135,7 @@ class InternalNode extends Node {
         return bestPair;
     }
 
-    public Node pickNext() {
+    private Node pickNext() {
         return null;
     }
 

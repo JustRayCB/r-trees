@@ -58,7 +58,7 @@ abstract class Node {
         }
     }
 
-    public abstract Node quadraticSplit();
+    protected abstract Node quadraticSplit();
 
-    public abstract Node linearSplit();
+    protected abstract Node linearSplit();
 }
