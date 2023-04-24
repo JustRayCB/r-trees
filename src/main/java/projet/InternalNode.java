@@ -2,6 +2,7 @@
 package projet;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.javatuples.Pair;
 import org.locationtech.jts.geom.Envelope;
@@ -85,6 +86,8 @@ class InternalNode extends Node {
         Pair<Node, Node> groups = pickSeeds();
         ArrayList<Node> groupA = new ArrayList<Node>(null);
         ArrayList<Node> groupB = new ArrayList<Node>(null);
+        Envelope mbrA = new Envelope(groups.getValue0().getMbr());
+        Envelope mbrB = new Envelope(groups.getValue1().getMbr());
         // remove the two nodes from the children list
         children.remove(groups.getValue0());
         children.remove(groups.getValue1());
@@ -108,8 +111,6 @@ class InternalNode extends Node {
             // if the area increase is the same for both groups, choose the one with the
             // smallest area
             Node nodeToPlace = pickNext();
-            Envelope mbrA = groupA.get(0).getMbr();
-            Envelope mbrB = groupB.get(0).getMbr();
             Envelope mbrAWithNode = new Envelope(mbrA);
             Envelope mbrBWithNode = new Envelope(mbrB);
             mbrAWithNode.expandToInclude(nodeToPlace.getMbr());
@@ -118,19 +119,46 @@ class InternalNode extends Node {
             double areaIncreaseB = mbrBWithNode.getArea() - mbrB.getArea();
             if (areaIncreaseA < areaIncreaseB) {
                 groupA.add(nodeToPlace);
+                mbrA = mbrAWithNode;
             } else if (areaIncreaseA > areaIncreaseB) {
                 groupB.add(nodeToPlace);
+                mbrB = mbrBWithNode;
             } else {
+                // if equals, choose the group with the smallest area
                 if (mbrA.getArea() < mbrB.getArea()) {
                     groupA.add(nodeToPlace);
-                } else {
+                } else if (mbrA.getArea() > mbrB.getArea()) {
                     groupB.add(nodeToPlace);
+                } else if (groupA.size() < groupB.size()) {
+                    groupA.add(nodeToPlace);
+                } else if (groupA.size() > groupB.size()) {
+                    groupB.add(nodeToPlace);
+                } else {
+                    // pick a random int number
+                    Random rand = new Random();
+                    if (rand.nextInt(2) == 0) {
+                        groupA.add(nodeToPlace);
+                    } else {
+                        groupB.add(nodeToPlace);
+                    }
+
                 }
+
             }
             nodeToIntegrate--;
         }
 
         return null;
+    }
+
+    private void addToA(Node nodeToPlace, Envelope mbrA, Envelope mbrAWithNode, ArrayList<Node> groupA) {
+        groupA.add(nodeToPlace);
+        mbrA = mbrAWithNode;
+    }
+
+    private void addToB(Node nodeToPlace, Envelope mbrB, Envelope mbrBWithNode, ArrayList<Node> groupB) {
+        groupB.add(nodeToPlace);
+        mbrB = mbrBWithNode;
     }
 
     private Pair<Node, Node> pickSeeds() {
