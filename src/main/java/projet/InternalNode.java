@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.javatuples.Pair;
+import org.javatuples.Triplet;
 import org.locationtech.jts.geom.Envelope;
 // import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
@@ -85,7 +86,7 @@ class InternalNode extends Node {
     }
 
     public Node quadraticSplit() {
-        Pair<Node, Node> groups = pickSeeds();
+        Pair<Node, Node> groups = pickSeedsQuadratic();
         ArrayList<Node> groupA = new ArrayList<Node>(null);
         ArrayList<Node> groupB = new ArrayList<Node>(null);
         Envelope mbrA = new Envelope(groups.getValue0().getMbr());
@@ -117,7 +118,8 @@ class InternalNode extends Node {
                 // else, choose the node that will increase the area of the mbr the least
                 // if the area increase is the same for both groups, choose the one with the
                 // smallest area, then the one with the fewest nodes, then randomly choosing
-                Node nodeToPlace = pickNext();
+                Node nodeToPlace = pickNextQuadratic(children.size() - nodeToIntegrate);
+                children.remove(nodeToPlace);
                 Envelope mbrAWithNode = new Envelope(mbrA);
                 Envelope mbrBWithNode = new Envelope(mbrB);
                 mbrAWithNode.expandToInclude(nodeToPlace.getMbr());
@@ -159,7 +161,7 @@ class InternalNode extends Node {
         return newNode;
     }
 
-    private Pair<Node, Node> pickSeeds() {
+    private Pair<Node, Node> pickSeedsQuadratic() {
         double maxArea = 0;
         Pair<Node, Node> bestPair = new Pair<Node, Node>(null, null);
         for (int i = 0; i < children.size(); i++) {
@@ -181,11 +183,36 @@ class InternalNode extends Node {
         return bestPair;
     }
 
-    private Node pickNext() {
+    private Node pickNextQuadratic(final int index) {
+        // needs to have the index of the next node to place in the children list
+        // Choose any entry
+        // with the maximum difference -> maybe we could use abs
+        // between d1 and d2
+
         return null;
     }
 
     public Node linearSplit() {
+        // picknext choose any of the remainings entries
+
+        return null;
+    }
+
+    public Node pickSeedsLinear() {
+        // find the entry whose rectangle has
+        // the highest low side, and the one
+        // with the lowest high side in each dimension
+        ArrayList<Triplet<Double, Double, Node>> lowHigh = new ArrayList<Triplet<Double, Double, Node>>();
+        Node bestLow = null;
+        Node bestHigh = null;
+        for (var child : children) {
+            // low side of children
+            double lowSide = child.getMbr().getMinY() + child.getMbr().getMinX();
+            double highSide = child.getMbr().getMaxY() + child.getMbr().getMaxX();
+            lowHigh.add(new Triplet<Double, Double, Node>(lowSide, highSide, child));
+        }
+        // useless to normalise the values ?
+
         return null;
     }
 
