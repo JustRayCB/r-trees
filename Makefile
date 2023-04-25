@@ -1,7 +1,8 @@
 main:
 	./mvnw compile
 run:
-	./mvnw exec:java -Dexec.mainClass=projet.SinglePoint
+	# ./mvnw exec:java -Dexec.mainClass=projet.SinglePoint
+	./mvnw exec:java -Dexec.mainClass=projet.Main
 clean:
 	./mvnw clean
 
@@ -17,3 +18,5 @@ leaf:
 	~/nvim.appimage src/main/java/projet/Leaf.java
 internalNode:
 	~/nvim.appimage src/main/java/projet/InternalNode.java
+m:
+	~/nvim.appimage src/main/java/projet/Main.java

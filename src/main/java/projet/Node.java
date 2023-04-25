@@ -8,13 +8,15 @@ import org.locationtech.jts.geom.Polygon;
 abstract class Node {
     protected Envelope mbr;
     protected boolean isLeaf;
+    protected Node father;
     protected static final int MAX_CHILDREN = 4;
     protected static final int MIN_CHILDREN = 2;
     protected static final String SPLIT_METHOD = "quadratic";
 
-    public Node(Envelope MBR, boolean isleaf) {
+    public Node(Envelope MBR, boolean isleaf, Node father) {
         this.mbr = MBR;
         this.isLeaf = isleaf;
+        this.father = father;
     }
 
     public Envelope getMbr() {

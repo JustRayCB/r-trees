@@ -13,7 +13,7 @@ public class RTree {
 
     public RTree() {
         this.nbrNodes = 0;
-        this.root = new InternalNode(new Envelope()); // default root
+        this.root = new InternalNode(new Envelope(), null); // default root
     }
 
     public Node search(Point p) {
@@ -51,6 +51,10 @@ public class RTree {
         for (int polygon = 0; polygon < multi.getNumGeometries(); polygon++) {
             addLeaf((Polygon) multi.getGeometryN(polygon), label);
         }
+    }
+
+    public String toString() {
+        return printRTree(root, 0);
     }
 
     public String printRTree(Node node, int level) {

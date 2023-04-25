@@ -32,14 +32,18 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
- * Prompts the user for a shapefile and displays the contents on the screen in a map frame.
+ * Prompts the user for a shapefile and displays the contents on the screen in a
+ * map frame.
  *
- * <p>This is the GeoTools Quickstart application used in documentation a and tutorials. *
+ * <p>
+ * This is the GeoTools Quickstart application used in documentation a and
+ * tutorials. *
  */
 public class SinglePoint {
 
     /**
-     * GeoTools Quickstart demo application. Prompts the user for a shapefile and displays its
+     * GeoTools Quickstart demo application. Prompts the user for a shapefile and
+     * displays its
      * contents on the screen in a map frame
      */
     public static void main(String[] args) throws Exception {
@@ -51,12 +55,15 @@ public class SinglePoint {
         // filename="../projetinfof203/data/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
         // String filename="/home/cbr/50m_cultural/WB_countries_Admin0_10m.shp";
         // String filename="/home/cbr/Unif2/50m_cultural/WB_countries_Admin0_10m.shp";
-        // String filename = "/home/cbr/Unif2/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
-        // String filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
+        // String filename =
+        // "/home/cbr/Unif2/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        // String
+        // filename="../projetinfof203/data/communes-20220101-shp/communes-20220101.shp";
         // String filename="/home/cbr/50m_cultural/ne_10m_admin_1_sel.shp";
-        // String filename = "../../../../WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
-        String filename = "WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
-        //"../../../../WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        // String filename =
+        // "../../../../WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        String filename = "data/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        // "../../../../WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
 
         File file = new File(filename);
         if (!file.exists())
@@ -98,7 +105,7 @@ public class SinglePoint {
             while (iterator.hasNext()) {
                 SimpleFeature feature = iterator.next();
                 //
-                MultiPolygon polygon = (MultiPolygon)feature.getDefaultGeometry();
+                MultiPolygon polygon = (MultiPolygon) feature.getDefaultGeometry();
                 System.out.println("Name of the polygone: " + feature.getAttribute("NAME_FR"));
                 String s = feature.getAttribute("NAME_FR").toString();
                 System.out.println("This is the string I got : " + s);
@@ -114,20 +121,20 @@ public class SinglePoint {
                 // int test = polygon.getNumGeometries();
                 // System.out.println("Nombre de polygones: " + test);
                 // for (int i = 0; i < test; i++) {
-                //     Polygon poly = (Polygon)polygon.getGeometryN(i);
-                //     Envelope env2 = poly.getEnvelopeInternal();
+                // Polygon poly = (Polygon)polygon.getGeometryN(i);
+                // Envelope env2 = poly.getEnvelopeInternal();
                 // }
                 //
                 // // System.out.println(env.expandToInclude());
                 // if (polygon != null && polygon.contains(p)) {
-                //     target = feature;
-                //     env = polygon.getEnvelopeInternal();
-                //     System.out.println("Envelope: minX = " + env.getMinX() +
-                //                        ", minY =  " + env.getMinY() + ", maxX =  " +
-                //                        env.getMaxX() +
-                //                        ", max Y =  " + env.getMaxY());
-                //     System.out.println("coordonnées du mbr : " + env.toString());
-                //     break;
+                // target = feature;
+                // env = polygon.getEnvelopeInternal();
+                // System.out.println("Envelope: minX = " + env.getMinX() +
+                // ", minY = " + env.getMinY() + ", maxX = " +
+                // env.getMaxX() +
+                // ", max Y = " + env.getMaxY());
+                // System.out.println("coordonnées du mbr : " + env.toString());
+                // break;
                 // }
             }
         }
@@ -173,12 +180,12 @@ public class SinglePoint {
         if (target != null) {
             // featureBuilder.add(gb.box(env.getMinX(), env.getMinY(), env.getMaxX(),
             // env.getMaxY())); collection.add(featureBuilder.buildFeature(null));
-            MultiPolygon multiPolygon = (MultiPolygon)target.getDefaultGeometry();
+            MultiPolygon multiPolygon = (MultiPolygon) target.getDefaultGeometry();
             for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
-                Polygon poly = (Polygon)multiPolygon.getGeometryN(i);
+                Polygon poly = (Polygon) multiPolygon.getGeometryN(i);
                 Envelope env2 = poly.getEnvelopeInternal();
                 featureBuilder.add(
-                    gb.box(env2.getMinX(), env2.getMinY(), env2.getMaxX(), env2.getMaxY()));
+                        gb.box(env2.getMinX(), env2.getMinY(), env2.getMaxX(), env2.getMaxY()));
                 collection.add(featureBuilder.buildFeature(null));
                 // print the name of poly
                 System.out.println("Name of the polygone: " + target.getAttribute("NAME_FR"));

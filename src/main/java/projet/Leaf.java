@@ -9,8 +9,8 @@ class Leaf extends Node {
     private Polygon polygon;
     private String name;
 
-    public Leaf(Polygon polygon, String name) {
-        super(polygon.getEnvelopeInternal(), true);
+    public Leaf(Polygon polygon, String name, Node father) {
+        super(polygon.getEnvelopeInternal(), true, father);
         this.polygon = polygon;
         this.name = name;
     }

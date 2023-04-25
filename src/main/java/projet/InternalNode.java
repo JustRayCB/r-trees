@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.javatuples.Pair;
-import org.javatuples.Triplet;
 import org.locationtech.jts.geom.Envelope;
 // import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
@@ -14,8 +13,8 @@ import org.locationtech.jts.geom.Polygon;
 class InternalNode extends Node {
     private ArrayList<Node> children;
 
-    public InternalNode(Envelope mbr) {
-        super(mbr, false);
+    public InternalNode(Envelope mbr, Node father) {
+        super(mbr, false, father);
         children = new ArrayList<Node>();
     }
 
@@ -49,15 +48,12 @@ class InternalNode extends Node {
             double areaInsertionMbr = insertionMbr.getArea(); // area(mbr U p)
             insertionArea.add(areaInsertionMbr - areaMbr); // area(mbr U p) - area(mbr)
         }
-        // return
-        // children.get(insertionArea.indexOf(insertionArea.stream().min(Double::compare).get()))
-        // .chooseNode(p);
         return children.get(insertionArea.indexOf(insertionArea.stream().min(Double::compare).get()));
     }
 
     public Node addLeaf(Polygon polygon, String label) {
         if (children.size() == 0 || children.get(0).isLeaf()) { // bottom level is reached -> Create Leaf
-            children.add(new Leaf(polygon, label));
+            children.add(new Leaf(polygon, label, this));
         } else {// still need to go deeper
             Node n = this.chooseNode(polygon);
             Node newNode = n.addLeaf(polygon, label);
@@ -67,7 +63,7 @@ class InternalNode extends Node {
                 children.add(newNode);
             }
         }
-        mbr.expandToInclude(polygon.getCoordinate());
+        mbr.expandToInclude(polygon.getEnvelopeInternal());
         if (children.size() >= MAX_CHILDREN) {
             return split();
         }
@@ -83,6 +79,97 @@ class InternalNode extends Node {
     private void addToB(Node nodeToPlace, Envelope mbrB, Envelope mbrBWithNode, ArrayList<Node> groupB) {
         groupB.add(nodeToPlace);
         mbrB = mbrBWithNode;
+    }
+
+    public Node linearSplit() {
+        // picknext choose any of the remainings entries
+        Pair<Node, Node> groups = pickSeedsLinear();
+        ArrayList<Node> groupA = new ArrayList<Node>(null);
+        ArrayList<Node> groupB = new ArrayList<Node>(null);
+        Envelope mbrA = new Envelope(groups.getValue0().getMbr());
+        Envelope mbrB = new Envelope(groups.getValue1().getMbr());
+        children.remove(groups.getValue0());
+        children.remove(groups.getValue1());
+
+        groupA.add(groups.getValue0());
+        groupB.add(groups.getValue1());
+
+        int nodeToIntegrate = children.size() - 2; // n-2 children remainings to place in the right group
+        while (nodeToIntegrate > 0) {
+            // if one group has so many nodes that all the rest must be assigned to it in
+            // order for it to have the minimum number m, assign them and stop
+            if (groupA.size() + nodeToIntegrate == MIN_CHILDREN) {
+                for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
+                    groupA.add(children.get(i));
+                    mbrA.expandToInclude(children.get(i).getMbr());
+                }
+                break;
+            } else if (groupB.size() + nodeToIntegrate == MIN_CHILDREN) {
+                for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
+                    groupB.add(children.get(i));
+                    mbrB.expandToInclude(children.get(i).getMbr());
+                }
+                break;
+            } else {
+
+                // else, choose the node that will increase the area of the mbr the least
+                // if the area increase is the same for both groups, choose the one with the
+                // smallest area, then the one with the fewest nodes, then randomly choosing
+                Node nodeToPlace = pickNextLinear();
+                children.remove(nodeToPlace);
+                Envelope mbrAWithNode = new Envelope(mbrA);
+                Envelope mbrBWithNode = new Envelope(mbrB);
+                mbrAWithNode.expandToInclude(nodeToPlace.getMbr());
+                mbrBWithNode.expandToInclude(nodeToPlace.getMbr());
+                double areaIncreaseA = mbrAWithNode.getArea() - mbrA.getArea();
+                double areaIncreaseB = mbrBWithNode.getArea() - mbrB.getArea();
+                if (areaIncreaseA < areaIncreaseB) {
+                    addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                } else if (areaIncreaseA > areaIncreaseB) {
+                    addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                } else {
+                    if (mbrA.getArea() < mbrB.getArea()) {
+                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                    } else if (mbrA.getArea() > mbrB.getArea()) {
+                        addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                    } else if (groupA.size() < groupB.size()) {
+                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                    } else if (groupA.size() > groupB.size()) {
+                        addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                    } else {
+                        Random rand = new Random();
+                        if (rand.nextInt(2) == 0) {
+                            addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                        } else {
+                            addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                        }
+                    }
+
+                }
+            }
+            nodeToIntegrate--;
+        }
+        if (father == null) {
+            // we need to create a father
+            InternalNode childA = new InternalNode(mbrA, this);
+            InternalNode childB = new InternalNode(mbrB, this);
+            childA.children = groupA;
+            childB.children = groupB;
+            mbr = new Envelope(mbrA);
+            mbr.expandToInclude(mbrB);
+            children.clear();
+            children.add(childA);
+            children.add(childB);
+            return null;
+        } else {
+            children.clear();
+            children.addAll(groupA);
+            mbr = mbrA;
+            InternalNode newNode = new InternalNode(mbrB, father);
+            newNode.children = groupB;
+            return newNode;
+
+        }
     }
 
     public Node quadraticSplit() {
@@ -118,7 +205,7 @@ class InternalNode extends Node {
                 // else, choose the node that will increase the area of the mbr the least
                 // if the area increase is the same for both groups, choose the one with the
                 // smallest area, then the one with the fewest nodes, then randomly choosing
-                Node nodeToPlace = pickNextQuadratic(children.size() - nodeToIntegrate, mbrA, mbrB);
+                Node nodeToPlace = pickNextQuadratic(mbrA, mbrB);
                 children.remove(nodeToPlace);
                 Envelope mbrAWithNode = new Envelope(mbrA);
                 Envelope mbrBWithNode = new Envelope(mbrB);
@@ -152,13 +239,27 @@ class InternalNode extends Node {
             }
             nodeToIntegrate--;
         }
-        // creation of the two new nodes
-        children = groupA;
-        mbr = mbrA;
-        InternalNode newNode = new InternalNode(mbrB);
-        newNode.children = groupB;
-        newNode.mbr = mbrB;
-        return newNode;
+        if (father == null) {
+            // we need to create a father
+            InternalNode childA = new InternalNode(mbrA, this);
+            InternalNode childB = new InternalNode(mbrB, this);
+            childA.children = groupA;
+            childB.children = groupB;
+            mbr = new Envelope(mbrA);
+            mbr.expandToInclude(mbrB);
+            children.clear();
+            children.add(childA);
+            children.add(childB);
+            return null;
+        } else {
+            children.clear();
+            children.addAll(groupA);
+            mbr = mbrA;
+            InternalNode newNode = new InternalNode(mbrB, father);
+            newNode.children = groupB;
+            return newNode;
+
+        }
     }
 
     private Pair<Node, Node> pickSeedsQuadratic() {
@@ -183,7 +284,14 @@ class InternalNode extends Node {
         return bestPair;
     }
 
-    private Node pickNextQuadratic(final int index, final Envelope mbrA, final Envelope mbrB) {
+    private Node pickNextLinear() {
+        Random rand = new Random();
+        int index = rand.nextInt(children.size());
+        Node node = children.get(index);
+        return node;
+    }
+
+    private Node pickNextQuadratic(final Envelope mbrA, final Envelope mbrB) {
         // needs to have the index of the next node to place in the children list
         // Choose any entry
         // with the maximum difference -> maybe we could use abs
@@ -193,7 +301,7 @@ class InternalNode extends Node {
         Node bestNode = null;
 
         // index is the index where we need to begin from because
-        for (int i = index; i < children.size(); i++) {
+        for (int i = 0; i < children.size(); i++) {
             Node node = children.get(i);
             Envelope mbr = node.getMbr();
 
@@ -211,33 +319,36 @@ class InternalNode extends Node {
             if (d > biggestDiff) {
                 biggestDiff = d;
                 bestNode = node;
-            }   
+            }
         }
         return bestNode;
     }
 
-    public Node linearSplit() {
-        // picknext choose any of the remainings entries
-
-        return null;
-    }
-
-    public Node pickSeedsLinear() {
+    public Pair<Node, Node> pickSeedsLinear() {
         // find the entry whose rectangle has
         // the highest low side, and the one
         // with the lowest high side in each dimension
-        ArrayList<Triplet<Double, Double, Node>> lowHigh = new ArrayList<Triplet<Double, Double, Node>>();
-        Node bestLow = null;
-        Node bestHigh = null;
+        double lowestHightSide = Double.MAX_VALUE;
+        double highestLowSide = Double.MIN_VALUE;
+        Node bestLowNode = null;
+        Node bestHighNode = null;
+
         for (var child : children) {
             // low side of children
             double lowSide = child.getMbr().getMinY() + child.getMbr().getMinX();
             double highSide = child.getMbr().getMaxY() + child.getMbr().getMaxX();
-            lowHigh.add(new Triplet<Double, Double, Node>(lowSide, highSide, child));
+            if (lowSide > highestLowSide) {
+                highestLowSide = lowSide;
+                bestLowNode = child;
+            }
+            if (highSide < lowestHightSide) {
+                lowestHightSide = highSide;
+                bestHighNode = child;
+            }
         }
         // useless to normalise the values ?
 
-        return null;
+        return new Pair<Node, Node>(bestLowNode, bestHighNode);
     }
 
     public ArrayList<Node> getChildren() {
