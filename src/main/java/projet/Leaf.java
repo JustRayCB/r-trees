@@ -52,7 +52,7 @@ class Leaf extends Node {
 
     public void print(StringBuilder buffer, String prefix, String childrenPrefix) {
         buffer.append(prefix);
-        buffer.append(name);
+        buffer.append(name + ':' + id);
         buffer.append('\n');
         // for (Iterator<Node> it = children.iterator(); it.hasNext();) {
         // Node child = it.next();
