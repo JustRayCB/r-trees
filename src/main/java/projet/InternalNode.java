@@ -118,7 +118,7 @@ class InternalNode extends Node {
                 // else, choose the node that will increase the area of the mbr the least
                 // if the area increase is the same for both groups, choose the one with the
                 // smallest area, then the one with the fewest nodes, then randomly choosing
-                Node nodeToPlace = pickNextQuadratic(children.size() - nodeToIntegrate);
+                Node nodeToPlace = pickNextQuadratic(children.size() - nodeToIntegrate, mbrA, mbrB);
                 children.remove(nodeToPlace);
                 Envelope mbrAWithNode = new Envelope(mbrA);
                 Envelope mbrBWithNode = new Envelope(mbrB);
@@ -183,13 +183,37 @@ class InternalNode extends Node {
         return bestPair;
     }
 
-    private Node pickNextQuadratic(final int index) {
+    private Node pickNextQuadratic(final int index, final Envelope mbrA, final Envelope mbrB) {
         // needs to have the index of the next node to place in the children list
         // Choose any entry
         // with the maximum difference -> maybe we could use abs
         // between d1 and d2
 
-        return null;
+        double biggestDiff = 0;
+        Node bestNode = null;
+
+        // index is the index where we need to begin from because
+        for (int i = index; i < children.size(); i++) {
+            Node node = children.get(i);
+            Envelope mbr = node.getMbr();
+
+            // we'll test adding the node to the two groups
+            Envelope augmentedMbrA = new Envelope(mbrA);
+            Envelope augmentedMbrB = new Envelope(mbrB);
+            augmentedMbrA.expandToInclude(mbr);
+            augmentedMbrB.expandToInclude(mbr);
+
+            // we check which augmentation is the smallest
+            double d1 = Math.abs(augmentedMbrA.getArea() - mbrA.getArea());
+            double d2 = Math.abs(augmentedMbrB.getArea() - mbrB.getArea());
+            double d = Math.abs(d1 - d2);
+
+            if (d > biggestDiff) {
+                biggestDiff = d;
+                bestNode = node;
+            }   
+        }
+        return bestNode;
     }
 
     public Node linearSplit() {
