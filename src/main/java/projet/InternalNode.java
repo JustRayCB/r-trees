@@ -203,7 +203,7 @@ class InternalNode extends Node {
             augmentedMbrA.expandToInclude(mbr);
             augmentedMbrB.expandToInclude(mbr);
 
-            // we check which augmentation is the smallest
+            // we check the difference between the two area augmentation
             double d1 = Math.abs(augmentedMbrA.getArea() - mbrA.getArea());
             double d2 = Math.abs(augmentedMbrB.getArea() - mbrB.getArea());
             double d = Math.abs(d1 - d2);
