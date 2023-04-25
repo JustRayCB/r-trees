@@ -69,7 +69,7 @@ class InternalNode extends Node {
         }
         mbr.expandToInclude(polygon.getEnvelopeInternal());
         System.out.println("End of addLeaf");
-        if (children.size() >= MAX_CHILDREN) {
+        if (children.size() > MAX_CHILDREN) {
             return split();
         }
 
