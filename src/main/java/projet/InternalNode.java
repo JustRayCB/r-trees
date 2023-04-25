@@ -180,8 +180,8 @@ class InternalNode extends Node {
     public Node quadraticSplit() {
         System.out.println("quadratic split");
         Pair<Node, Node> groups = pickSeedsQuadratic();
-        ArrayList<Node> groupA = new ArrayList<Node>(null);
-        ArrayList<Node> groupB = new ArrayList<Node>(null);
+        ArrayList<Node> groupA = new ArrayList<Node>();
+        ArrayList<Node> groupB = new ArrayList<Node>();
         Envelope mbrA = new Envelope(groups.getValue0().getMbr());
         Envelope mbrB = new Envelope(groups.getValue1().getMbr());
         children.remove(groups.getValue0());
@@ -343,13 +343,14 @@ class InternalNode extends Node {
 
         for (var child : children) {
             // low side of children
-            double lowSide = child.getMbr().getMinY() + child.getMbr().getMinX();
-            double highSide = child.getMbr().getMaxY() + child.getMbr().getMaxX();
+            double lowSide = (child.getMbr().getMinY() / child.getMbr().getHeight()) +
+                    (child.getMbr().getMinX() / child.getMbr().getWidth());
+            double highSide = (child.getMbr().getMaxY() / child.getMbr().getHeight()) +
+                    (child.getMbr().getMaxX() / child.getMbr().getWidth());
             if (lowSide > highestLowSide) {
                 highestLowSide = lowSide;
                 bestLowNode = child;
-            }
-            if (highSide < lowestHightSide) {
+            } else if (highSide < lowestHightSide) {
                 lowestHightSide = highSide;
                 bestHighNode = child;
             }
