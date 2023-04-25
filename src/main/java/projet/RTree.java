@@ -35,8 +35,12 @@ public class RTree {
      * @param label   : Name of the polygon
      */
     public void addLeaf(Polygon polygon, String label) {
+        System.out.println("Adding " + label + " to the R-Tree");
         root.addLeaf(polygon, label);
         nbrNodes++;
+        if (nbrNodes == 3) {
+            System.out.println(this.toString());
+        }
     }
 
     /**
@@ -54,10 +58,12 @@ public class RTree {
     }
 
     public String toString() {
+        System.out.println("tostring");
         return printRTree(root, 0);
     }
 
     public String printRTree(Node node, int level) {
+        System.out.println("Print tree");
         StringBuilder sb = new StringBuilder();
         // Ajouter des espaces pour décaler le nœud en fonction de son niveau
         for (int i = 0; i < level; i++) {

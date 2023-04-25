@@ -33,6 +33,7 @@ class InternalNode extends Node {
     }
 
     public Node chooseNode(Polygon p) {
+        System.out.println("In choose Node");
         // we need to stop to the node that have leaves as children
         if (children.size() >= 1 && children.get(0).isLeaf()) {
             return this;// if childisLeaf is true, we will insert the new node inside the current one
@@ -48,10 +49,12 @@ class InternalNode extends Node {
             double areaInsertionMbr = insertionMbr.getArea(); // area(mbr U p)
             insertionArea.add(areaInsertionMbr - areaMbr); // area(mbr U p) - area(mbr)
         }
+        System.out.println("End of chooseNode");
         return children.get(insertionArea.indexOf(insertionArea.stream().min(Double::compare).get()));
     }
 
     public Node addLeaf(Polygon polygon, String label) {
+        System.out.println("In addLeaf");
         if (children.size() == 0 || children.get(0).isLeaf()) { // bottom level is reached -> Create Leaf
             children.add(new Leaf(polygon, label, this));
         } else {// still need to go deeper
@@ -64,9 +67,11 @@ class InternalNode extends Node {
             }
         }
         mbr.expandToInclude(polygon.getEnvelopeInternal());
+        System.out.println("End of addLeaf");
         if (children.size() >= MAX_CHILDREN) {
             return split();
         }
+
         return null;
 
     }
@@ -173,6 +178,7 @@ class InternalNode extends Node {
     }
 
     public Node quadraticSplit() {
+        System.out.println("quadratic split");
         Pair<Node, Node> groups = pickSeedsQuadratic();
         ArrayList<Node> groupA = new ArrayList<Node>(null);
         ArrayList<Node> groupB = new ArrayList<Node>(null);
@@ -240,6 +246,7 @@ class InternalNode extends Node {
             nodeToIntegrate--;
         }
         if (father == null) {
+            System.out.println("father is null");
             // we need to create a father
             InternalNode childA = new InternalNode(mbrA, this);
             InternalNode childB = new InternalNode(mbrB, this);
@@ -252,6 +259,7 @@ class InternalNode extends Node {
             children.add(childB);
             return null;
         } else {
+            System.out.println("father is not null");
             children.clear();
             children.addAll(groupA);
             mbr = mbrA;
