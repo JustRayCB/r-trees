@@ -271,11 +271,7 @@ class InternalNode extends Node {
     }
 
     private Pair<Node, Node> pickSeedsQuadratic() {
-<<<<<<< HEAD
         System.out.println("pick seeds quadratic");
-=======
-        System.out.println("pickSeedsQuadratic");
->>>>>>> 78420f1 (Fixing initializing Pair)
         double maxArea = 0;
         Pair<Node, Node> bestPair = new Pair<Node, Node>(children.get(0), children.get(1));
         for (int i = 0; i < children.size(); i++) {
@@ -298,11 +294,8 @@ class InternalNode extends Node {
                 }
             }
         }
-<<<<<<< HEAD
         System.out.println("end pick seeds quadratic");
-=======
         System.out.println("Returning best pair");
->>>>>>> 78420f1 (Fixing initializing Pair)
         return bestPair;
     }
 
