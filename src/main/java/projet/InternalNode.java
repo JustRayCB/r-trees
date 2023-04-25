@@ -271,9 +271,13 @@ class InternalNode extends Node {
     }
 
     private Pair<Node, Node> pickSeedsQuadratic() {
+<<<<<<< HEAD
         System.out.println("pick seeds quadratic");
+=======
+        System.out.println("pickSeedsQuadratic");
+>>>>>>> 78420f1 (Fixing initializing Pair)
         double maxArea = 0;
-        Pair<Node, Node> bestPair = new Pair<Node, Node>(null, null);
+        Pair<Node, Node> bestPair = new Pair<Node, Node>(children.get(0), children.get(1));
         for (int i = 0; i < children.size(); i++) {
             for (int j = i + 1; j < children.size(); j++) {
                 Node node1 = children.get(i);
@@ -284,13 +288,21 @@ class InternalNode extends Node {
                 bigArea.expandToInclude(mbr2);
                 double area = bigArea.getArea() - mbr1.getArea() - mbr2.getArea();
                 if (area > maxArea) {
+                    System.out.println("found a best pair");
                     maxArea = area;
                     bestPair.addAt0(node1);
-                    bestPair.addAt1(node1);
+                    bestPair.addAt1(node2);
+                    System.out.println(node1.isLeaf());
+                    System.out.println(bestPair.getValue0().isLeaf());
+                    System.out.println(bestPair.getValue1().isLeaf());
                 }
             }
         }
+<<<<<<< HEAD
         System.out.println("end pick seeds quadratic");
+=======
+        System.out.println("Returning best pair");
+>>>>>>> 78420f1 (Fixing initializing Pair)
         return bestPair;
     }
 
