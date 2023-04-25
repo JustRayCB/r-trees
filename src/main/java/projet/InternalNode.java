@@ -271,6 +271,7 @@ class InternalNode extends Node {
     }
 
     private Pair<Node, Node> pickSeedsQuadratic() {
+        System.out.println("pick seeds quadratic");
         double maxArea = 0;
         Pair<Node, Node> bestPair = new Pair<Node, Node>(null, null);
         for (int i = 0; i < children.size(); i++) {
@@ -289,17 +290,21 @@ class InternalNode extends Node {
                 }
             }
         }
+        System.out.println("end pick seeds quadratic");
         return bestPair;
     }
 
     private Node pickNextLinear() {
+        System.out.println("pick next linear");
         Random rand = new Random();
         int index = rand.nextInt(children.size());
         Node node = children.get(index);
+        System.out.println("end pick next linear");
         return node;
     }
 
     private Node pickNextQuadratic(final Envelope mbrA, final Envelope mbrB) {
+        System.out.println("pick next quadratic");
         // needs to have the index of the next node to place in the children list
         // Choose any entry
         // with the maximum difference -> maybe we could use abs
@@ -329,6 +334,7 @@ class InternalNode extends Node {
                 bestNode = node;
             }
         }
+        System.out.println("end pick next quadratic");
         return bestNode;
     }
 
@@ -336,6 +342,7 @@ class InternalNode extends Node {
         // find the entry whose rectangle has
         // the highest low side, and the one
         // with the lowest high side in each dimension
+        System.out.println("pick seeds linear");
         double lowestHightSide = Double.MAX_VALUE;
         double highestLowSide = Double.MIN_VALUE;
         Node bestLowNode = null;
@@ -357,6 +364,7 @@ class InternalNode extends Node {
         }
         // useless to normalise the values ?
 
+        System.out.println("end pick seeds linear");
         return new Pair<Node, Node>(bestLowNode, bestHighNode);
     }
 
