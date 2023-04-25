@@ -2,6 +2,7 @@
 package projet;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.javatuples.Pair;
@@ -273,7 +274,10 @@ class InternalNode extends Node {
     private Pair<Node, Node> pickSeedsQuadratic() {
         System.out.println("pick seeds quadratic");
         double maxArea = 0;
-        Pair<Node, Node> bestPair = new Pair<Node, Node>(children.get(0), children.get(1));
+        // Pair<Node, Node> bestPair = new Pair<Node, Node>(children.get(0),
+        // children.get(1));
+        Node bestNode1 = children.get(0);
+        Node bestNode2 = children.get(1);
         for (int i = 0; i < children.size(); i++) {
             for (int j = i + 1; j < children.size(); j++) {
                 Node node1 = children.get(i);
@@ -286,17 +290,19 @@ class InternalNode extends Node {
                 if (area > maxArea) {
                     System.out.println("found a best pair");
                     maxArea = area;
-                    bestPair.addAt0(node1);
-                    bestPair.addAt1(node2);
+                    // bestPair.addAt0(node1);
+                    // bestPair.addAt1(node2);
+                    bestNode1 = node1;
+                    bestNode2 = node2;
                     System.out.println(node1.isLeaf());
-                    System.out.println(bestPair.getValue0().isLeaf());
-                    System.out.println(bestPair.getValue1().isLeaf());
+                    System.out.println(bestNode1.isLeaf());
+                    System.out.println(bestNode2.isLeaf());
                 }
             }
         }
         System.out.println("end pick seeds quadratic");
         System.out.println("Returning best pair");
-        return bestPair;
+        return new Pair<Node, Node>(bestNode1, bestNode2);
     }
 
     private Node pickNextLinear() {
@@ -375,5 +381,19 @@ class InternalNode extends Node {
 
     public ArrayList<Node> getChildren() {
         return children;
+    }
+
+    public void print(StringBuilder buffer, String prefix, String childrenPrefix) {
+        buffer.append(prefix);
+        buffer.append(id);
+        buffer.append('\n');
+        for (Iterator<Node> it = children.iterator(); it.hasNext();) {
+            Node child = it.next();
+            if (it.hasNext()) {
+                child.print(buffer, childrenPrefix + "├── ", childrenPrefix + "│   ");
+            } else {
+                child.print(buffer, childrenPrefix + "└── ", childrenPrefix + "    ");
+            }
+        }
     }
 }

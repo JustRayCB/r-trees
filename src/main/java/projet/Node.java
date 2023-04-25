@@ -9,9 +9,11 @@ abstract class Node {
     protected Envelope mbr;
     protected boolean isLeaf;
     protected Node father;
+    protected final int id = name++;
     protected static final int MAX_CHILDREN = 4;
     protected static final int MIN_CHILDREN = 2;
     protected static final String SPLIT_METHOD = "quadratic";
+    protected static int name = 0;
 
     public Node(Envelope MBR, boolean isleaf, Node father) {
         this.mbr = MBR;
@@ -63,4 +65,10 @@ abstract class Node {
     protected abstract Node quadraticSplit();
 
     protected abstract Node linearSplit();
+
+    public int getId() {
+        return id;
+    }
+
+    public abstract void print(StringBuilder buffer, String prefix, String childrenPrefix);
 }

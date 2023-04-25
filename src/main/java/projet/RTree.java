@@ -38,9 +38,7 @@ public class RTree {
         System.out.println("Adding " + label + " to the R-Tree");
         root.addLeaf(polygon, label);
         nbrNodes++;
-        if (nbrNodes == 3) {
-            System.out.println(this.toString());
-        }
+        print();
     }
 
     /**
@@ -66,32 +64,15 @@ public class RTree {
         System.out.println("Print tree");
         StringBuilder sb = new StringBuilder();
         // Ajouter des espaces pour décaler le nœud en fonction de son niveau
-        for (int i = 0; i < level; i++) {
-            sb.append(" ");
-        }
-        if (node.isLeaf()) {
-            sb.append(node.toString());
-            sb.append(System.lineSeparator()); // Ajouter un retour à la ligne
-        } else {
-            sb.append("*");
-            sb.append(System.lineSeparator());
-            // convert node to InternalNode
-            InternalNode internalNode = (InternalNode) node;
-            for (Node child : internalNode.getChildren()) {
-                sb.append(printRTree(child, level + 1));
-                sb.append(System.lineSeparator()); // Ajouter un retour à la ligne
-                // Ajouter des caractères de liaison si ce n'est pas le dernier enfant
-                if (internalNode.getChildren().indexOf(child) < internalNode.getChildren().size() - 1) {
-                    sb.append("|");
-                    for (int i = 0; i < level; i++) {
-                        sb.append(" ");
-                    }
-                }
 
-            }
-        }
         return sb.toString();
 
+    }
+
+    public void print() {
+        StringBuilder buffer = new StringBuilder();
+        root.print(buffer, "", "");
+        System.out.println(buffer.toString());
     }
 
     public int getNbrNodes() {

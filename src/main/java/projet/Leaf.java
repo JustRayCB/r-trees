@@ -49,4 +49,19 @@ class Leaf extends Node {
     public String toString() {
         return name;
     }
+
+    public void print(StringBuilder buffer, String prefix, String childrenPrefix) {
+        buffer.append(prefix);
+        buffer.append(name);
+        buffer.append('\n');
+        // for (Iterator<Node> it = children.iterator(); it.hasNext();) {
+        // Node child = it.next();
+        // if (it.hasNext()) {
+        // child.print(buffer, childrenPrefix + "├── ", childrenPrefix + "│ ");
+        // } else {
+        // child.print(buffer, childrenPrefix + "└── ", childrenPrefix + " ");
+        // }
+        // }
+    }
+
 }
