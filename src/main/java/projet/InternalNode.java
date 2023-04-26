@@ -61,7 +61,7 @@ class InternalNode extends Node {
         } else {// still need to go deeper
             Node n = this.chooseNode(polygon);
             Node newNode = n.addLeaf(polygon, label);
-            if (newNode == null) {
+            if (newNode != null) {
                 // a split occured in addLeaf
                 // a new node is added at this level
                 children.add(newNode);
@@ -72,9 +72,8 @@ class InternalNode extends Node {
         if (children.size() > MAX_CHILDREN) {
             return split();
         }
-
+        System.out.println("I will return null");
         return null;
-
     }
 
     private void addToA(Node nodeToPlace, Envelope mbrA, Envelope mbrAWithNode, ArrayList<Node> groupA) {
@@ -90,8 +89,8 @@ class InternalNode extends Node {
     public Node linearSplit() {
         // picknext choose any of the remainings entries
         Pair<Node, Node> groups = pickSeedsLinear();
-        ArrayList<Node> groupA = new ArrayList<Node>(null);
-        ArrayList<Node> groupB = new ArrayList<Node>(null);
+        ArrayList<Node> groupA = new ArrayList<Node>();
+        ArrayList<Node> groupB = new ArrayList<Node>();
         Envelope mbrA = new Envelope(groups.getValue0().getMbr());
         Envelope mbrB = new Envelope(groups.getValue1().getMbr());
         children.remove(groups.getValue0());
@@ -159,6 +158,17 @@ class InternalNode extends Node {
             // we need to create a father
             InternalNode childA = new InternalNode(mbrA, this);
             InternalNode childB = new InternalNode(mbrB, this);
+
+            System.out.println("Group A");
+            for (Node a : groupA) {
+                System.out.println(a.getId());
+            }
+
+            System.out.println("Group B");
+            for (Node a : groupB) {
+                System.out.println(a.getId());
+            }
+
             childA.children = groupA;
             childB.children = groupB;
             mbr = new Envelope(mbrA);
@@ -185,34 +195,40 @@ class InternalNode extends Node {
         ArrayList<Node> groupB = new ArrayList<Node>();
         Envelope mbrA = new Envelope(groups.getValue0().getMbr());
         Envelope mbrB = new Envelope(groups.getValue1().getMbr());
-        children.remove(groups.getValue0());
-        children.remove(groups.getValue1());
-
         groupA.add(groups.getValue0());
         groupB.add(groups.getValue1());
 
-        int nodeToIntegrate = children.size() - 2; // n-2 children remainings to place in the right group
+        children.remove(groups.getValue0());
+        children.remove(groups.getValue1());
+
+
+        int nodeToIntegrate = children.size(); // n-2 children remainings to place in the right group
+        System.out.println(nodeToIntegrate);
         while (nodeToIntegrate > 0) {
+            System.out.println( );
             // if one group has so many nodes that all the rest must be assigned to it in
             // order for it to have the minimum number m, assign them and stop
             if (groupA.size() + nodeToIntegrate == MIN_CHILDREN) {
+                System.out.println("IF");
                 for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
                     groupA.add(children.get(i));
                     mbrA.expandToInclude(children.get(i).getMbr());
                 }
                 break;
             } else if (groupB.size() + nodeToIntegrate == MIN_CHILDREN) {
+                System.out.println("ELSE IF");
                 for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
                     groupB.add(children.get(i));
                     mbrB.expandToInclude(children.get(i).getMbr());
                 }
                 break;
             } else {
-
+                System.out.println("ELSE");
                 // else, choose the node that will increase the area of the mbr the least
                 // if the area increase is the same for both groups, choose the one with the
                 // smallest area, then the one with the fewest nodes, then randomly choosing
                 Node nodeToPlace = pickNextQuadratic(mbrA, mbrB);
+                System.out.println(nodeToPlace.getId());
                 children.remove(nodeToPlace);
                 Envelope mbrAWithNode = new Envelope(mbrA);
                 Envelope mbrBWithNode = new Envelope(mbrB);
@@ -251,6 +267,15 @@ class InternalNode extends Node {
             // we need to create a father
             InternalNode childA = new InternalNode(mbrA, this);
             InternalNode childB = new InternalNode(mbrB, this);
+            System.out.println("Group A");
+            for (Node a : groupA) {
+                System.out.println(a.getId());
+            }
+
+            System.out.println("Group B");
+            for (Node a : groupB) {
+                System.out.println(a.getId());
+            }
             childA.children = groupA;
             childB.children = groupB;
             mbr = new Envelope(mbrA);
