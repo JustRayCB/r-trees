@@ -4,6 +4,12 @@ package projet;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.geometry.jts.GeometryBuilder;
 
 abstract class Node {
     protected Envelope mbr;
@@ -56,4 +62,7 @@ abstract class Node {
     }
 
     public abstract void print(StringBuilder buffer, String prefix, String childrenPrefix);
+
+    public abstract void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
+            GeometryBuilder gb);
 }

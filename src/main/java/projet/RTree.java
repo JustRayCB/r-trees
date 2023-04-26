@@ -5,6 +5,9 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 // import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Polygon;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.geometry.jts.GeometryBuilder;
 
 public class RTree {
 
@@ -77,5 +80,10 @@ public class RTree {
 
     public int getNbrNodes() {
         return nbrNodes;
+    }
+
+    public void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
+            GeometryBuilder gb) {
+        root.parseTree(collection, featureBuilder, gb);
     }
 }

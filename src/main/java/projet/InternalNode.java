@@ -10,6 +10,9 @@ import org.locationtech.jts.geom.Envelope;
 // import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.geometry.jts.GeometryBuilder;
 
 class InternalNode extends Node {
     private ArrayList<Node> children;
@@ -88,10 +91,10 @@ class InternalNode extends Node {
 
     public Node split() {
         System.out.println("quadratic split");
-        Pair<Node,Node> groups = new Pair<Node,Node>(null, null);
+        Pair<Node, Node> groups = new Pair<Node, Node>(null, null);
         if (SPLIT_METHOD == "quadratic") {
             groups = pickSeedsQuadratic();
-        } else { 
+        } else {
             groups = pickSeedsLinear();
         }
         ArrayList<Node> groupA = new ArrayList<Node>();
@@ -104,11 +107,10 @@ class InternalNode extends Node {
         children.remove(groups.getValue0());
         children.remove(groups.getValue1());
 
-
         int nodeToIntegrate = children.size(); // n-2 children remainings to place in the right group
         System.out.println(nodeToIntegrate);
         while (nodeToIntegrate > 0) {
-            System.out.println( );
+            System.out.println();
             // if one group has so many nodes that all the rest must be assigned to it in
             // order for it to have the minimum number m, assign them and stop
             if (groupA.size() + nodeToIntegrate == MIN_CHILDREN) {
@@ -133,7 +135,7 @@ class InternalNode extends Node {
                 Node nodeToPlace;
                 if (SPLIT_METHOD == "quadratic") {
                     nodeToPlace = pickNextQuadratic(mbrA, mbrB);
-                } else { 
+                } else {
                     nodeToPlace = pickNextLinear();
                 }
                 System.out.println(nodeToPlace.getId());
@@ -299,7 +301,7 @@ class InternalNode extends Node {
                     (child.getMbr().getMinX() / child.getMbr().getWidth());
             double highSide = (child.getMbr().getMaxY() / child.getMbr().getHeight()) +
                     (child.getMbr().getMaxX() / child.getMbr().getWidth());
-            System.out.println(lowSide + " versus " + highestLowSide);  
+            System.out.println(lowSide + " versus " + highestLowSide);
             if (lowSide > highestLowSide) {
                 System.out.println("Entering if lowSide");
                 highestLowSide = lowSide;
@@ -331,5 +333,21 @@ class InternalNode extends Node {
                 child.print(buffer, childrenPrefix + "└── ", childrenPrefix + "    ");
             }
         }
+    }
+
+    public void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
+            GeometryBuilder gb) {
+        featureBuilder.add(
+                gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
+        collection.add(featureBuilder.buildFeature(null));
+        for (Iterator<Node> it = children.iterator(); it.hasNext();) {
+            Node child = it.next();
+            if (it.hasNext()) {
+                child.parseTree(collection, featureBuilder, gb);
+            } else {
+                child.parseTree(collection, featureBuilder, gb);
+            }
+        }
+
     }
 }

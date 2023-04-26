@@ -4,6 +4,12 @@ package projet;
 // import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.geometry.jts.GeometryBuilder;
 
 class Leaf extends Node {
     private Polygon polygon;
@@ -62,6 +68,16 @@ class Leaf extends Node {
         // child.print(buffer, childrenPrefix + "└── ", childrenPrefix + " ");
         // }
         // }
+    }
+
+    public void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
+            GeometryBuilder gb) {
+        featureBuilder.add(
+                gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
+        collection.add(featureBuilder.buildFeature(null));
+        featureBuilder.add(polygon);
+        collection.add(featureBuilder.buildFeature(null));
+
     }
 
 }

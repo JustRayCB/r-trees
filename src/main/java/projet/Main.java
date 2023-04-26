@@ -59,17 +59,25 @@ public class Main {
         }
 
         System.out.println(rtree.toString());
-        // MapContent map = new MapContent();
-        // map.setTitle("Projet INFO-F203");
-        //
-        // Style style = SLD.createSimpleStyle(featureSource.getSchema());
-        // Layer layer = new FeatureLayer(featureSource, style);
-        // map.addLayer(layer);
-        //
-        // ListFeatureCollection collection = new
-        // ListFeatureCollection(featureSource.getSchema());
-        // SimpleFeatureBuilder featureBuilder = new
-        // SimpleFeatureBuilder(featureSource.getSchema());
+        MapContent map = new MapContent();
+        map.setTitle("Projet INFO-F203");
+
+        Style style = SLD.createSimpleStyle(featureSource.getSchema());
+        Layer layer = new FeatureLayer(featureSource, style);
+        map.addLayer(layer);
+
+        ListFeatureCollection collection = new ListFeatureCollection(featureSource.getSchema());
+        SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureSource.getSchema());
+        rtree.parseTree(collection, featureBuilder, gb);
+
+        Polygon c = gb.circle(p.getX(), p.getY(), all_features.getBounds().getWidth()
+                / 200, 10);
+        Style style2 = SLD.createLineStyle(Color.red, 2.0f);
+        Layer layer2 = new FeatureLayer(collection, style2);
+        map.addLayer(layer2);
+
+        // Now display the map
+        JMapFrame.showMap(map);
 
     }
 }
