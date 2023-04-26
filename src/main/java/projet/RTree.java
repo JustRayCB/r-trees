@@ -38,7 +38,6 @@ public class RTree {
         System.out.println("Adding " + label + " to the R-Tree");
         root.addLeaf(polygon, label);
         nbrNodes++;
-        print();
     }
 
     /**
@@ -53,6 +52,7 @@ public class RTree {
         for (int polygon = 0; polygon < multi.getNumGeometries(); polygon++) {
             addLeaf((Polygon) multi.getGeometryN(polygon), label);
         }
+        print();
     }
 
     public String toString() {
