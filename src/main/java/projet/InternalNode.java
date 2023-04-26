@@ -23,13 +23,17 @@ class InternalNode extends Node {
     }
 
     public Node search(Point p) {
-        if (mbr.contains(p.getCoordinate())) { // if the point is inside the mbr
+        if (mbr.contains(p.getEnvelopeInternal())) { // if the point is inside the mbr
+            System.out.println("Coordinates of the point : " + p.getCoordinate());
+            System.out.println("Coordinates of the mbr : " + mbr.toString());
+            System.out.println("searching in : " + this.toString());
+
             for (Node child : children) {
                 var result = child.search(p);
                 if (result != null) {
                     return result;
                 } else {
-                    System.out.println("Not found");
+                    System.out.println("Not found in node");
                 }
             }
         } // if the point is not inside the mbr, it's not inside the node or his children
@@ -38,23 +42,21 @@ class InternalNode extends Node {
 
     public Node chooseNode(Polygon p) {
         System.out.println("In choose Node");
-        // we need to stop to the node that have leaves as children
-        if (children.size() >= 1 && children.get(0).isLeaf()) {
-            return this;// if childisLeaf is true, we will insert the new node inside the current one
-        }
-        // we need to find the child that will minimize the increase of the MBR on
-        // insertion
-        ArrayList<Double> insertionArea = new ArrayList<Double>();
+        double minIncrease = Double.MAX_VALUE;
+        Node minNode = null;
         for (Node child : children) {
             Envelope childMbr = child.mbr;
             double areaMbr = childMbr.getArea(); // area(mbr)
             Envelope insertionMbr = new Envelope(childMbr);
             insertionMbr.expandToInclude(p.getCoordinate());
             double areaInsertionMbr = insertionMbr.getArea(); // area(mbr U p)
-            insertionArea.add(areaInsertionMbr - areaMbr); // area(mbr U p) - area(mbr)
+            if (areaInsertionMbr - areaMbr < minIncrease) {
+                minIncrease = areaInsertionMbr - areaMbr;
+                minNode = child;
+            }
         }
         System.out.println("End of chooseNode");
-        return children.get(insertionArea.indexOf(insertionArea.stream().min(Double::compare).get()));
+        return minNode;
     }
 
     public Node addLeaf(Polygon polygon, String label) {
@@ -115,14 +117,14 @@ class InternalNode extends Node {
             // order for it to have the minimum number m, assign them and stop
             if (groupA.size() + nodeToIntegrate == MIN_CHILDREN) {
                 System.out.println("IF");
-                for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
+                for (int i = 0; i < children.size(); i++) {
                     groupA.add(children.get(i));
                     mbrA.expandToInclude(children.get(i).getMbr());
                 }
                 break;
             } else if (groupB.size() + nodeToIntegrate == MIN_CHILDREN) {
                 System.out.println("ELSE IF");
-                for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
+                for (int i = 0; i < children.size(); i++) {
                     groupB.add(children.get(i));
                     mbrB.expandToInclude(children.get(i).getMbr());
                 }
@@ -161,12 +163,6 @@ class InternalNode extends Node {
                         addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
                     } else {
                         addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                        // Random rand = new Random();
-                        // if (rand.nextInt(2) == 0) {
-                        // addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                        // } else {
-                        // addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
-                        // }
                     }
 
                 }
@@ -180,12 +176,12 @@ class InternalNode extends Node {
             InternalNode childB = new InternalNode(mbrB, this);
             System.out.println("Group A");
             for (Node a : groupA) {
-                System.out.println(a.getId());
+                System.out.println(a.toString());
             }
 
             System.out.println("Group B");
             for (Node a : groupB) {
-                System.out.println(a.getId());
+                System.out.println(a.toString());
             }
             childA.children = groupA;
             childB.children = groupB;
@@ -212,8 +208,8 @@ class InternalNode extends Node {
         double maxArea = 0;
         // Pair<Node, Node> bestPair = new Pair<Node, Node>(children.get(0),
         // children.get(1));
-        Node bestNode1 = children.get(0);
-        Node bestNode2 = children.get(1);
+        Node bestNode1 = null;
+        Node bestNode2 = null;
         for (int i = 0; i < children.size(); i++) {
             for (int j = i + 1; j < children.size(); j++) {
                 Node node1 = children.get(i);
@@ -338,9 +334,9 @@ class InternalNode extends Node {
 
     public void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
             GeometryBuilder gb) {
-        // featureBuilder.add(
-        // gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
-        // collection.add(featureBuilder.buildFeature(null));
+        featureBuilder.add(
+                gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
+        collection.add(featureBuilder.buildFeature(null));
         for (Iterator<Node> it = children.iterator(); it.hasNext();) {
             Node child = it.next();
             if (it.hasNext()) {
@@ -350,5 +346,9 @@ class InternalNode extends Node {
             }
         }
 
+    }
+
+    public String toString() {
+        return "Node " + id;
     }
 }

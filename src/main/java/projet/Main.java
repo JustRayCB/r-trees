@@ -49,12 +49,16 @@ public class Main {
         GeometryBuilder gb = new GeometryBuilder();
         Point p = gb.point(-70.9, -33.4); // Santiago
 
+        int i = 0;
         try (SimpleFeatureIterator itr = all_features.features()) {
             while (itr.hasNext()) {
                 SimpleFeature f = itr.next();
                 MultiPolygon mp = (MultiPolygon) f.getDefaultGeometry();
-                System.out.println("Adding " + f.getAttribute("NAME_FR").toString());
-                rtree.addLeaf(mp, f.getAttribute("NAME_FR").toString());
+                if (f.getAttribute("NAME_FR").toString().equals("Chili")) {
+                    System.out.println("Adding " + f.getAttribute("NAME_FR").toString());
+                    rtree.addLeaf(mp, f.getAttribute("NAME_FR").toString());
+                    break;
+                }
             }
         }
 
