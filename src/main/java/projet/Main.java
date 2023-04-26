@@ -58,7 +58,7 @@ public class Main {
             }
         }
 
-        System.out.println(rtree.toString());
+        rtree.print();
         MapContent map = new MapContent();
         map.setTitle("Projet INFO-F203");
 
@@ -68,13 +68,25 @@ public class Main {
 
         ListFeatureCollection collection = new ListFeatureCollection(featureSource.getSchema());
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureSource.getSchema());
-        rtree.parseTree(collection, featureBuilder, gb);
-
+        ListFeatureCollection collection2 = new ListFeatureCollection(featureSource.getSchema());
+        SimpleFeatureBuilder featureBuilder2 = new SimpleFeatureBuilder(featureSource.getSchema());
         Polygon c = gb.circle(p.getX(), p.getY(), all_features.getBounds().getWidth()
                 / 200, 10);
+        featureBuilder2.add(c);
+        collection2.add(featureBuilder2.buildFeature(null));
+        rtree.parseTree(collection, featureBuilder, gb);
+        Node n = rtree.search(p);
+        if (n != null) {
+            System.out.println("Found " + n.toString());
+        } else {
+            System.out.println("Pas trouvé");
+        }
+
         Style style2 = SLD.createLineStyle(Color.red, 2.0f);
         Layer layer2 = new FeatureLayer(collection, style2);
+        Layer layer3 = new FeatureLayer(collection2, style2);
         map.addLayer(layer2);
+        map.addLayer(layer3);
 
         // Now display the map
         JMapFrame.showMap(map);

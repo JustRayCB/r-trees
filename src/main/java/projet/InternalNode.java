@@ -160,12 +160,13 @@ class InternalNode extends Node {
                     } else if (groupA.size() > groupB.size()) {
                         addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
                     } else {
-                        Random rand = new Random();
-                        if (rand.nextInt(2) == 0) {
-                            addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                        } else {
-                            addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
-                        }
+                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                        // Random rand = new Random();
+                        // if (rand.nextInt(2) == 0) {
+                        // addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                        // } else {
+                        // addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                        // }
                     }
 
                 }
@@ -242,9 +243,9 @@ class InternalNode extends Node {
 
     private Node pickNextLinear() {
         System.out.println("pick next linear");
-        Random rand = new Random();
-        int index = rand.nextInt(children.size());
-        Node node = children.get(index);
+        // Random rand = new Random();
+        // int index = rand.nextInt(children.size());
+        Node node = children.get(0);
         System.out.println("end pick next linear");
         return node;
     }
@@ -337,9 +338,9 @@ class InternalNode extends Node {
 
     public void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
             GeometryBuilder gb) {
-        featureBuilder.add(
-                gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
-        collection.add(featureBuilder.buildFeature(null));
+        // featureBuilder.add(
+        // gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
+        // collection.add(featureBuilder.buildFeature(null));
         for (Iterator<Node> it = children.iterator(); it.hasNext();) {
             Node child = it.next();
             if (it.hasNext()) {

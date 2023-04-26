@@ -55,21 +55,6 @@ public class RTree {
         for (int polygon = 0; polygon < multi.getNumGeometries(); polygon++) {
             addLeaf((Polygon) multi.getGeometryN(polygon), label);
         }
-        print();
-    }
-
-    public String toString() {
-        System.out.println("tostring");
-        return printRTree(root, 0);
-    }
-
-    public String printRTree(Node node, int level) {
-        System.out.println("Print tree");
-        StringBuilder sb = new StringBuilder();
-        // Ajouter des espaces pour décaler le nœud en fonction de son niveau
-
-        return sb.toString();
-
     }
 
     public void print() {
