@@ -86,111 +86,14 @@ class InternalNode extends Node {
         mbrB = mbrBWithNode;
     }
 
-    public Node linearSplit() {
-        // picknext choose any of the remainings entries
-        Pair<Node, Node> groups = pickSeedsLinear();
-        ArrayList<Node> groupA = new ArrayList<Node>();
-        ArrayList<Node> groupB = new ArrayList<Node>();
-        Envelope mbrA = new Envelope(groups.getValue0().getMbr());
-        Envelope mbrB = new Envelope(groups.getValue1().getMbr());
-        children.remove(groups.getValue0());
-        children.remove(groups.getValue1());
-
-        groupA.add(groups.getValue0());
-        groupB.add(groups.getValue1());
-
-        int nodeToIntegrate = children.size() - 2; // n-2 children remainings to place in the right group
-        while (nodeToIntegrate > 0) {
-            // if one group has so many nodes that all the rest must be assigned to it in
-            // order for it to have the minimum number m, assign them and stop
-            if (groupA.size() + nodeToIntegrate == MIN_CHILDREN) {
-                for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
-                    groupA.add(children.get(i));
-                    mbrA.expandToInclude(children.get(i).getMbr());
-                }
-                break;
-            } else if (groupB.size() + nodeToIntegrate == MIN_CHILDREN) {
-                for (int i = children.size() - nodeToIntegrate; i < children.size(); i++) {
-                    groupB.add(children.get(i));
-                    mbrB.expandToInclude(children.get(i).getMbr());
-                }
-                break;
-            } else {
-
-                // else, choose the node that will increase the area of the mbr the least
-                // if the area increase is the same for both groups, choose the one with the
-                // smallest area, then the one with the fewest nodes, then randomly choosing
-                Node nodeToPlace = pickNextLinear();
-                children.remove(nodeToPlace);
-                Envelope mbrAWithNode = new Envelope(mbrA);
-                Envelope mbrBWithNode = new Envelope(mbrB);
-                mbrAWithNode.expandToInclude(nodeToPlace.getMbr());
-                mbrBWithNode.expandToInclude(nodeToPlace.getMbr());
-                double areaIncreaseA = mbrAWithNode.getArea() - mbrA.getArea();
-                double areaIncreaseB = mbrBWithNode.getArea() - mbrB.getArea();
-                if (areaIncreaseA < areaIncreaseB) {
-                    addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                } else if (areaIncreaseA > areaIncreaseB) {
-                    addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
-                } else {
-                    if (mbrA.getArea() < mbrB.getArea()) {
-                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                    } else if (mbrA.getArea() > mbrB.getArea()) {
-                        addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
-                    } else if (groupA.size() < groupB.size()) {
-                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                    } else if (groupA.size() > groupB.size()) {
-                        addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
-                    } else {
-                        Random rand = new Random();
-                        if (rand.nextInt(2) == 0) {
-                            addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
-                        } else {
-                            addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
-                        }
-                    }
-
-                }
-            }
-            nodeToIntegrate--;
-        }
-        if (father == null) {
-            // we need to create a father
-            InternalNode childA = new InternalNode(mbrA, this);
-            InternalNode childB = new InternalNode(mbrB, this);
-
-            System.out.println("Group A");
-            for (Node a : groupA) {
-                System.out.println(a.getId());
-            }
-
-            System.out.println("Group B");
-            for (Node a : groupB) {
-                System.out.println(a.getId());
-            }
-
-            childA.children = groupA;
-            childB.children = groupB;
-            mbr = new Envelope(mbrA);
-            mbr.expandToInclude(mbrB);
-            children.clear();
-            children.add(childA);
-            children.add(childB);
-            return null;
-        } else {
-            children.clear();
-            children.addAll(groupA);
-            mbr = mbrA;
-            InternalNode newNode = new InternalNode(mbrB, father);
-            newNode.children = groupB;
-            return newNode;
-
-        }
-    }
-
-    public Node quadraticSplit() {
+    public Node split() {
         System.out.println("quadratic split");
-        Pair<Node, Node> groups = pickSeedsQuadratic();
+        Pair<Node,Node> groups;
+        if (SPLIT_METHOD == "quadratic") {
+            groups = pickSeedsQuadratic();
+        } else { 
+            groups = pickSeedsLinear();
+        }
         ArrayList<Node> groupA = new ArrayList<Node>();
         ArrayList<Node> groupB = new ArrayList<Node>();
         Envelope mbrA = new Envelope(groups.getValue0().getMbr());
@@ -227,7 +130,12 @@ class InternalNode extends Node {
                 // else, choose the node that will increase the area of the mbr the least
                 // if the area increase is the same for both groups, choose the one with the
                 // smallest area, then the one with the fewest nodes, then randomly choosing
-                Node nodeToPlace = pickNextQuadratic(mbrA, mbrB);
+                Node nodeToPlace;
+                if (SPLIT_METHOD == "quadratic") {
+                    nodeToPlace = pickNextQuadratic(mbrA, mbrB);
+                } else { 
+                    nodeToPlace = pickNextLinear();
+                }
                 System.out.println(nodeToPlace.getId());
                 children.remove(nodeToPlace);
                 Envelope mbrAWithNode = new Envelope(mbrA);

@@ -10,9 +10,9 @@ abstract class Node {
     protected boolean isLeaf;
     protected Node father;
     protected final int id = name++;
-    protected static final int MAX_CHILDREN = 4;
-    protected static final int MIN_CHILDREN = 2;
-    protected static final String SPLIT_METHOD = "quadratic";
+    protected static final int MAX_CHILDREN = 50;
+    protected static final int MIN_CHILDREN = 25;
+    protected static final String SPLIT_METHOD = "linear";
     protected static int name = 0;
 
     public Node(Envelope MBR, boolean isleaf, Node father) {
@@ -50,21 +50,6 @@ abstract class Node {
      *         (i.e. if it has MAX_CHILDREN children)
      */
     public abstract Node addLeaf(Polygon polygon, String label);
-
-    /**
-     * @brief: Function that will split the node with the quadratic or linear split
-     */
-    public Node split() {
-        if (SPLIT_METHOD == "quadratic") {
-            return this.quadraticSplit();
-        } else {
-            return this.linearSplit();
-        }
-    }
-
-    protected abstract Node quadraticSplit();
-
-    protected abstract Node linearSplit();
 
     public int getId() {
         return id;
