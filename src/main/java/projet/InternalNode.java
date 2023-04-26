@@ -88,7 +88,7 @@ class InternalNode extends Node {
 
     public Node split() {
         System.out.println("quadratic split");
-        Pair<Node,Node> groups;
+        Pair<Node,Node> groups = new Pair<Node,Node>(null, null);
         if (SPLIT_METHOD == "quadratic") {
             groups = pickSeedsQuadratic();
         } else { 
@@ -288,27 +288,30 @@ class InternalNode extends Node {
         // with the lowest high side in each dimension
         System.out.println("pick seeds linear");
         double lowestHightSide = Double.MAX_VALUE;
-        double highestLowSide = Double.MIN_VALUE;
+        double highestLowSide = -Double.MAX_VALUE;
         Node bestLowNode = null;
         Node bestHighNode = null;
 
         for (var child : children) {
+            System.out.println(child.id);
             // low side of children
             double lowSide = (child.getMbr().getMinY() / child.getMbr().getHeight()) +
                     (child.getMbr().getMinX() / child.getMbr().getWidth());
             double highSide = (child.getMbr().getMaxY() / child.getMbr().getHeight()) +
                     (child.getMbr().getMaxX() / child.getMbr().getWidth());
+            System.out.println(lowSide + " versus " + highestLowSide);  
             if (lowSide > highestLowSide) {
+                System.out.println("Entering if lowSide");
                 highestLowSide = lowSide;
                 bestLowNode = child;
             } else if (highSide < lowestHightSide) {
+                System.out.println("Entering if highSide");
                 lowestHightSide = highSide;
                 bestHighNode = child;
             }
         }
         // useless to normalise the values ?
 
-        System.out.println("end pick seeds linear");
         return new Pair<Node, Node>(bestLowNode, bestHighNode);
     }
 

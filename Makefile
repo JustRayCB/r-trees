@@ -2,7 +2,7 @@ main:
 	./mvnw compile
 run:
 	# ./mvnw exec:java -Dexec.mainClass=projet.SinglePoint
-	./mvnw exec:java -Dexec.mainClass=projet.Main >>test.txt
+	./mvnw exec:java -Dexec.mainClass=projet.Main >linear.txt
 clean:
 	./mvnw clean
 
