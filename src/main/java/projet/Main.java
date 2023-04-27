@@ -56,15 +56,7 @@ public class Main {
             while (itr.hasNext()) {
                 SimpleFeature f = itr.next();
                 MultiPolygon mp = (MultiPolygon) f.getDefaultGeometry();
-                if (f.getAttribute("NAME_FR").toString().equals("Chili")) {
-                    System.out.println("Adding " + f.getAttribute("NAME_FR").toString());
-                    rtree.addLeaf(mp, f.getAttribute("NAME_FR").toString());
-                    if (mp.contains(p)) {
-                        System.out.println("Found the point in " + f.getAttribute("NAME_FR").toString());
-                    }
-                    System.out.println("Voici le nombre : " + mp.getNumGeometries());
-                    break;
-                }
+                rtree.addLeaf(mp, f.getAttribute("NAME_FR").toString());
             }
         }
 

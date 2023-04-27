@@ -62,13 +62,11 @@ class Leaf extends Node {
     public void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
             GeometryBuilder gb) {
         // if (name.e"Chili") {
-        if (name.equals("Chili")) {
-            featureBuilder.add(
-                    gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
-            collection.add(featureBuilder.buildFeature(null));
-            featureBuilder.add(polygon);
-            collection.add(featureBuilder.buildFeature(null));
-        }
+        featureBuilder.add(
+                gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
+        collection.add(featureBuilder.buildFeature(null));
+        featureBuilder.add(polygon);
+        collection.add(featureBuilder.buildFeature(null));
 
     }
 

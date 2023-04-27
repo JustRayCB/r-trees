@@ -18,7 +18,7 @@ abstract class Node {
     protected final int id = name++;
     protected static final int MAX_CHILDREN = 50;
     protected static final int MIN_CHILDREN = 25;
-    protected static final String SPLIT_METHOD = "linear";
+    protected static final String SPLIT_METHOD = "quadratic";
     protected static int name = 0;
 
     public Node(Envelope MBR, boolean isleaf, Node father) {
