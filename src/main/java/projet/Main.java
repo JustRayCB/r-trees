@@ -46,10 +46,15 @@ public class Main {
         SimpleFeatureCollection all_features = featureSource.getFeatures();
         store.dispose();
 
+        ReferencedEnvelope global_bounds = featureSource.getBounds();
+
+        Random r = new Random();
         GeometryBuilder gb = new GeometryBuilder();
+        Point p = gb.point(r.nextInt((int) global_bounds.getMinX(), (int) global_bounds.getMaxX()),
+                r.nextInt((int) global_bounds.getMinY(), (int) global_bounds.getMaxY()));
         // Point p = gb.point(-70.9, -33.4); // Santiago
         // Point p = gb.point(-118.24, 28.98); // Madrid
-        Point p = gb.point(-66.54, -55.24); // Madrid
+        // Point p = gb.point(-66.54, -55.24); // Madrid
 
         int i = 0;
         try (SimpleFeatureIterator itr = all_features.features()) {
@@ -85,8 +90,9 @@ public class Main {
         }
 
         Style style2 = SLD.createLineStyle(Color.red, 2.0f);
+        Style style3 = SLD.createLineStyle(Color.blue, 2.0f);
         Layer layer2 = new FeatureLayer(collection, style2);
-        Layer layer3 = new FeatureLayer(collection2, style2);
+        Layer layer3 = new FeatureLayer(collection2, style3);
         map.addLayer(layer2);
         map.addLayer(layer3);
 

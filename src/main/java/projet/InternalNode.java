@@ -316,9 +316,11 @@ class InternalNode extends Node {
 
     public void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
             GeometryBuilder gb) {
-        featureBuilder.add(
-                gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
-        collection.add(featureBuilder.buildFeature(null));
+        // uncomment these line if you want to see all the mbr of the different INTERNAL
+        // NODE
+        // featureBuilder.add(
+        // gb.box(mbr.getMinX(), mbr.getMinY(), mbr.getMaxX(), mbr.getMaxY()));
+        // collection.add(featureBuilder.buildFeature(null));
         for (Iterator<Node> it = children.iterator(); it.hasNext();) {
             Node child = it.next();
             if (it.hasNext()) {
