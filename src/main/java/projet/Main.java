@@ -47,7 +47,9 @@ public class Main {
         store.dispose();
 
         GeometryBuilder gb = new GeometryBuilder();
-        Point p = gb.point(-70.9, -33.4); // Santiago
+        // Point p = gb.point(-70.9, -33.4); // Santiago
+        // Point p = gb.point(-118.24, 28.98); // Madrid
+        Point p = gb.point(-66.54, -55.24); // Madrid
 
         int i = 0;
         try (SimpleFeatureIterator itr = all_features.features()) {
@@ -57,6 +59,10 @@ public class Main {
                 if (f.getAttribute("NAME_FR").toString().equals("Chili")) {
                     System.out.println("Adding " + f.getAttribute("NAME_FR").toString());
                     rtree.addLeaf(mp, f.getAttribute("NAME_FR").toString());
+                    if (mp.contains(p)) {
+                        System.out.println("Found the point in " + f.getAttribute("NAME_FR").toString());
+                    }
+                    System.out.println("Voici le nombre : " + mp.getNumGeometries());
                     break;
                 }
             }

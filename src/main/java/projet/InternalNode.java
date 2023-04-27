@@ -41,7 +41,6 @@ class InternalNode extends Node {
     }
 
     public Node chooseNode(Polygon p) {
-        System.out.println("In choose Node");
         double minIncrease = Double.MAX_VALUE;
         Node minNode = null;
         for (Node child : children) {
@@ -55,12 +54,10 @@ class InternalNode extends Node {
                 minNode = child;
             }
         }
-        System.out.println("End of chooseNode");
         return minNode;
     }
 
     public Node addLeaf(Polygon polygon, String label) {
-        System.out.println("In addLeaf");
         if (children.size() == 0 || children.get(0).isLeaf()) { // bottom level is reached -> Create Leaf
             children.add(new Leaf(polygon, label, this));
         } else {// still need to go deeper
@@ -73,11 +70,9 @@ class InternalNode extends Node {
             }
         }
         mbr.expandToInclude(polygon.getEnvelopeInternal());
-        System.out.println("End of addLeaf");
         if (children.size() > MAX_CHILDREN) {
             return split();
         }
-        System.out.println("I will return null");
         return null;
     }
 
@@ -92,7 +87,6 @@ class InternalNode extends Node {
     }
 
     public Node split() {
-        System.out.println("quadratic split");
         Pair<Node, Node> groups = new Pair<Node, Node>(null, null);
         if (SPLIT_METHOD == "quadratic") {
             groups = pickSeedsQuadratic();
@@ -110,27 +104,24 @@ class InternalNode extends Node {
         children.remove(groups.getValue1());
 
         int nodeToIntegrate = children.size(); // n-2 children remainings to place in the right group
-        System.out.println(nodeToIntegrate);
         while (nodeToIntegrate > 0) {
-            System.out.println();
             // if one group has so many nodes that all the rest must be assigned to it in
             // order for it to have the minimum number m, assign them and stop
             if (groupA.size() + nodeToIntegrate == MIN_CHILDREN) {
-                System.out.println("IF");
                 for (int i = 0; i < children.size(); i++) {
                     groupA.add(children.get(i));
                     mbrA.expandToInclude(children.get(i).getMbr());
+                    nodeToIntegrate--;
                 }
                 break;
             } else if (groupB.size() + nodeToIntegrate == MIN_CHILDREN) {
-                System.out.println("ELSE IF");
                 for (int i = 0; i < children.size(); i++) {
                     groupB.add(children.get(i));
                     mbrB.expandToInclude(children.get(i).getMbr());
+                    nodeToIntegrate--;
                 }
                 break;
             } else {
-                System.out.println("ELSE");
                 // else, choose the node that will increase the area of the mbr the least
                 // if the area increase is the same for both groups, choose the one with the
                 // smallest area, then the one with the fewest nodes, then randomly choosing
@@ -140,29 +131,48 @@ class InternalNode extends Node {
                 } else {
                     nodeToPlace = pickNextLinear();
                 }
-                System.out.println(nodeToPlace.getId());
                 children.remove(nodeToPlace);
                 Envelope mbrAWithNode = new Envelope(mbrA);
                 Envelope mbrBWithNode = new Envelope(mbrB);
+                GeometryBuilder gb = new GeometryBuilder();
+                Point p = gb.point(-66.57, -55.22);
+                if (nodeToPlace.mbr.contains(p.getCoordinate())) {
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    System.out.println("J'ai trouvé le node pas dans le mbr : " + nodeToPlace.getId());
+                }
                 mbrAWithNode.expandToInclude(nodeToPlace.getMbr());
                 mbrBWithNode.expandToInclude(nodeToPlace.getMbr());
                 double areaIncreaseA = mbrAWithNode.getArea() - mbrA.getArea();
                 double areaIncreaseB = mbrBWithNode.getArea() - mbrB.getArea();
                 if (areaIncreaseA < areaIncreaseB) {
-                    addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                    groupA.add(nodeToPlace);
+                    // mbrA.expandToInclude(mbrAWithNode);
+                    mbrA = mbrAWithNode;
                 } else if (areaIncreaseA > areaIncreaseB) {
-                    addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                    groupB.add(nodeToPlace);
+                    // mbrB.expandToInclude(mbrBWithNode);
+                    mbrB = mbrBWithNode;
                 } else {
                     if (mbrA.getArea() < mbrB.getArea()) {
-                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                        groupA.add(nodeToPlace);
+                        // mbrA.expandToInclude(mbrAWithNode);
+                        mbrA = mbrAWithNode;
                     } else if (mbrA.getArea() > mbrB.getArea()) {
-                        addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                        groupB.add(nodeToPlace);
+                        mbrB = mbrBWithNode;
+                        // mbrB.expandToInclude(mbrBWithNode);
                     } else if (groupA.size() < groupB.size()) {
-                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                        groupA.add(nodeToPlace);
+                        // mbrA.expandToInclude(mbrAWithNode);
+                        mbrA = mbrAWithNode;
                     } else if (groupA.size() > groupB.size()) {
-                        addToB(nodeToPlace, mbrB, mbrBWithNode, groupB);
+                        groupB.add(nodeToPlace);
+                        // mbrB.expandToInclude(mbrBWithNode);
+                        mbrB = mbrBWithNode;
                     } else {
-                        addToA(nodeToPlace, mbrA, mbrAWithNode, groupA);
+                        groupA.add(nodeToPlace);
+                        // mbrA.expandToInclude(mbrAWithNode);
+                        mbrA = mbrAWithNode;
                     }
 
                 }
@@ -170,19 +180,9 @@ class InternalNode extends Node {
             nodeToIntegrate--;
         }
         if (father == null) {
-            System.out.println("father is null");
             // we need to create a father
             InternalNode childA = new InternalNode(mbrA, this);
             InternalNode childB = new InternalNode(mbrB, this);
-            System.out.println("Group A");
-            for (Node a : groupA) {
-                System.out.println(a.toString());
-            }
-
-            System.out.println("Group B");
-            for (Node a : groupB) {
-                System.out.println(a.toString());
-            }
             childA.children = groupA;
             childB.children = groupB;
             mbr = new Envelope(mbrA);
@@ -192,19 +192,18 @@ class InternalNode extends Node {
             children.add(childB);
             return null;
         } else {
-            System.out.println("father is not null");
             children.clear();
             children.addAll(groupA);
             mbr = mbrA;
             InternalNode newNode = new InternalNode(mbrB, father);
             newNode.children = groupB;
+            father.mbr.expandToInclude(mbr);
             return newNode;
 
         }
     }
 
     private Pair<Node, Node> pickSeedsQuadratic() {
-        System.out.println("pick seeds quadratic");
         double maxArea = 0;
         // Pair<Node, Node> bestPair = new Pair<Node, Node>(children.get(0),
         // children.get(1));
@@ -220,34 +219,23 @@ class InternalNode extends Node {
                 bigArea.expandToInclude(mbr2);
                 double area = bigArea.getArea() - mbr1.getArea() - mbr2.getArea();
                 if (area > maxArea) {
-                    System.out.println("found a best pair");
                     maxArea = area;
                     // bestPair.addAt0(node1);
                     // bestPair.addAt1(node2);
                     bestNode1 = node1;
                     bestNode2 = node2;
-                    System.out.println(node1.isLeaf());
-                    System.out.println(bestNode1.isLeaf());
-                    System.out.println(bestNode2.isLeaf());
                 }
             }
         }
-        System.out.println("end pick seeds quadratic");
-        System.out.println("Returning best pair");
         return new Pair<Node, Node>(bestNode1, bestNode2);
     }
 
     private Node pickNextLinear() {
-        System.out.println("pick next linear");
-        // Random rand = new Random();
-        // int index = rand.nextInt(children.size());
         Node node = children.get(0);
-        System.out.println("end pick next linear");
         return node;
     }
 
     private Node pickNextQuadratic(final Envelope mbrA, final Envelope mbrB) {
-        System.out.println("pick next quadratic");
         // needs to have the index of the next node to place in the children list
         // Choose any entry
         // with the maximum difference -> maybe we could use abs
@@ -277,7 +265,6 @@ class InternalNode extends Node {
                 bestNode = node;
             }
         }
-        System.out.println("end pick next quadratic");
         return bestNode;
     }
 
@@ -285,26 +272,21 @@ class InternalNode extends Node {
         // find the entry whose rectangle has
         // the highest low side, and the one
         // with the lowest high side in each dimension
-        System.out.println("pick seeds linear");
         double lowestHightSide = Double.MAX_VALUE;
         double highestLowSide = -Double.MAX_VALUE;
         Node bestLowNode = null;
         Node bestHighNode = null;
 
         for (var child : children) {
-            System.out.println(child.id);
             // low side of children
             double lowSide = (child.getMbr().getMinY() / child.getMbr().getHeight()) +
                     (child.getMbr().getMinX() / child.getMbr().getWidth());
             double highSide = (child.getMbr().getMaxY() / child.getMbr().getHeight()) +
                     (child.getMbr().getMaxX() / child.getMbr().getWidth());
-            System.out.println(lowSide + " versus " + highestLowSide);
             if (lowSide > highestLowSide) {
-                System.out.println("Entering if lowSide");
                 highestLowSide = lowSide;
                 bestLowNode = child;
             } else if (highSide < lowestHightSide) {
-                System.out.println("Entering if highSide");
                 lowestHightSide = highSide;
                 bestHighNode = child;
             }

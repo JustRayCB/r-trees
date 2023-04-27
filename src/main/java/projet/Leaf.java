@@ -57,14 +57,6 @@ class Leaf extends Node {
         buffer.append(prefix);
         buffer.append(name + ':' + id);
         buffer.append('\n');
-        // for (Iterator<Node> it = children.iterator(); it.hasNext();) {
-        // Node child = it.next();
-        // if (it.hasNext()) {
-        // child.print(buffer, childrenPrefix + "├── ", childrenPrefix + "│ ");
-        // } else {
-        // child.print(buffer, childrenPrefix + "└── ", childrenPrefix + " ");
-        // }
-        // }
     }
 
     public void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,

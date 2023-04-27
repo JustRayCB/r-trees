@@ -38,7 +38,6 @@ public class RTree {
      * @param label   : Name of the polygon
      */
     public void addLeaf(Polygon polygon, String label) {
-        System.out.println("Adding " + label + " to the R-Tree");
         root.addLeaf(polygon, label);
         nbrNodes++;
     }
