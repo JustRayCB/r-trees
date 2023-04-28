@@ -34,7 +34,7 @@ public class Main {
         System.out.println("Hello");
         System.out.println("World");
         RTree rtree = new RTree();
-        String filename = "data/WB_countries_Admin0_10m/WB_countries_Admin0_10m.shp";
+        String filename = "data/world_countries/WB_countries_Admin0_10m.shp";
 
         File file = new File(filename);
         if (!file.exists())
