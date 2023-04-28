@@ -144,7 +144,7 @@ public class Main {
                 + ", SPLIT_METHOD = " + SPLIT_METHOD);
         System.out.println("methode de root " + rtree.getSplitMethod());
         // Now display the map
-        JMapFrame.showMap(map);
+        // JMapFrame.showMap(map);
 
     }
 }

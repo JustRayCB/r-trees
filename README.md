@@ -33,6 +33,10 @@ make
 make run
 ```
 
+You can specify arguments to the program by typing this:
+
+`make run ARGS="<max child InternalNode> <min child InternalNode> <split methode>"`
+
 > The program will then ask you to choose a data set amon a list.
 You 'll just need to enter a name of the list.
 
