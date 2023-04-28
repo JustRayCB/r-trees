@@ -71,7 +71,7 @@ class InternalNode extends Node {
 
     private Node split() {
         Pair<Node, Node> groups = new Pair<Node, Node>(null, null);
-        if (SPLIT_METHOD == "quadratic") {
+        if (SPLIT_METHOD.equals("quadratic")) {
             groups = pickSeedsQuadratic();
         } else {
             groups = pickSeedsLinear();
@@ -109,7 +109,7 @@ class InternalNode extends Node {
                 // if the area increase is the same for both groups, choose the one with the
                 // smallest area, then the one with the fewest nodes, then randomly choosing
                 Node nodeToPlace;
-                if (SPLIT_METHOD == "quadratic") {
+                if (SPLIT_METHOD.equals("quadratic")) {
                     nodeToPlace = pickNextQuadratic(mbrA, mbrB);
                 } else {
                     nodeToPlace = pickNextLinear();
