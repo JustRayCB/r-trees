@@ -237,7 +237,7 @@ class InternalNode extends Node {
             double d2 = Math.abs(augmentedMbrB.getArea() - mbrB.getArea());
             double d = Math.abs(d1 - d2);
 
-            if (d > biggestDiff) {
+            if (d >= biggestDiff) {
                 biggestDiff = d;
                 bestNode = node;
             }
