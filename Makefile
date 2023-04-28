@@ -1,10 +1,26 @@
+COMMAND_LINUX_BASED=./mvnw
+COMMAND_WINDOWS=.\mvnw.cmd
+
+USED_COMMAND=""
+
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Windows)
+	USED_COMMAND=$(COMMAND_WINDOWS)
+endif
+
+ifeq ($(UNAME), Linux)
+	USED_COMMAND=$(COMMAND_LINUX_BASED)
+endif
+
 main:
-	./mvnw compile
+	$(USED_COMMAND) compile
+install:
+	$(USED_COMMAND) clean install
 run:
-	# ./mvnw exec:java -Dexec.mainClass=projet.SinglePoint
-	./mvnw exec:java -Dexec.mainClass=projet.Main -Dexec.cleanupDaemonThreads=false
+	$(USED_COMMAND) exec:java -Dexec.mainClass=projet.Main -Dexec.cleanupDaemonThreads=false
 clean:
-	./mvnw clean
+	$(USED_COMMAND) clean
 
 
 # POUR RAYAN
