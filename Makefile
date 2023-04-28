@@ -5,10 +5,13 @@ USED_COMMAND=""
 
 UNAME := $(shell uname)
 
+
+ifeq ($(OS),Windows_NT)
+	USED_COMMAND=$(COMMAND_WINDOWS)
+endif
+
 ifeq ($(UNAME), Linux)
 	USED_COMMAND=$(COMMAND_LINUX_BASED)
-else
-	USED_COMMAND=$(COMMAND_WINDOWS)
 endif
 
 main:

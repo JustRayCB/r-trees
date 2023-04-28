@@ -5,6 +5,16 @@ This is a repo for the INFO-F203 course at ULB in BA-INFO:2
 This project use the **Geotools** and **Javatuples** libraries to
 make the project work
 
+## Depedencies
+
+- Java 17
+
+> The project was not tested with other version of Java
+
+- Geotools and Javatuples
+
+> Installed with the command in [Installation](#installation)
+
 ## Installation
 
 ```bash
