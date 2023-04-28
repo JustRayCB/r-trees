@@ -5,7 +5,7 @@ USED_COMMAND=""
 
 UNAME := $(shell uname)
 
-ifeq ($(UNAME), Windows)
+ifeq ($(OS), Windows)
 	USED_COMMAND=$(COMMAND_WINDOWS)
 else
 	USED_COMMAND=$(COMMAND_LINUX_BASED)
