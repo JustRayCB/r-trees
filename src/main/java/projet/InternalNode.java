@@ -33,7 +33,7 @@ class InternalNode extends Node {
         return null;
     }
 
-    public Node chooseNode(Polygon p) {
+    protected Node chooseNode(Polygon p) {
         double minIncrease = Double.MAX_VALUE;
         Node minNode = null;
         for (Node child : children) {
@@ -69,7 +69,7 @@ class InternalNode extends Node {
         return null;
     }
 
-    public Node split() {
+    private Node split() {
         Pair<Node, Node> groups = new Pair<Node, Node>(null, null);
         if (SPLIT_METHOD == "quadratic") {
             groups = pickSeedsQuadratic();
@@ -245,25 +245,25 @@ class InternalNode extends Node {
         return bestNode;
     }
 
-    public Pair<Node, Node> pickSeedsLinear() {
+    private Pair<Node, Node> pickSeedsLinear() {
         // find the entry whose rectangle has
         // the highest low side, and the one
         // with the lowest high side in each dimension
-        double lowestHightSide = Double.MAX_VALUE;
-        double highestLowSide = -Double.MAX_VALUE;
+        double lowestHightSide = -Double.MAX_VALUE;
+        double highestLowSide = Double.MAX_VALUE;
         Node bestLowNode = null;
         Node bestHighNode = null;
 
         for (var child : children) {
             // low side of children
             double lowSide = (child.getMbr().getMinY() / child.getMbr().getHeight()) +
-                    (child.getMbr().getMinX() / child.getMbr().getWidth());
+                    (child.getMbr().getMinX() / child.getMbr().getWidth()); // low left point
             double highSide = (child.getMbr().getMaxY() / child.getMbr().getHeight()) +
-                    (child.getMbr().getMaxX() / child.getMbr().getWidth());
-            if (lowSide > highestLowSide) {
+                    (child.getMbr().getMaxX() / child.getMbr().getWidth()); // high right point
+            if (lowSide < highestLowSide) {
                 highestLowSide = lowSide;
                 bestLowNode = child;
-            } else if (highSide < lowestHightSide) {
+            } else if (highSide > lowestHightSide) {
                 lowestHightSide = highSide;
                 bestHighNode = child;
             }

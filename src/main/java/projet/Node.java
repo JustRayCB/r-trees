@@ -57,7 +57,7 @@ abstract class Node {
      * 
      * @param p : the new polygon to insert
      */
-    public abstract Node chooseNode(Polygon p);
+    protected abstract Node chooseNode(Polygon p);
 
     /**
      * @brief: Add a new leaf for the current node if the node is full
