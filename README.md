@@ -57,13 +57,19 @@ the zip contain all the data files to run the project with differents data sets.
 
 ### belgium_sectors
 
+https://statbel.fgov.be/fr/open-data/secteurs-statistiques-2022
+
 Division of Belgium into statistical sectors
 
 ### french_regions
 
+https://www.data.gouv.fr/fr/datasets/contours-des-regions-francaises-sur-openstreetmap/
+
 French municipalities
 
 ### World countries
+
+https://datacatalog.worldbank.org/search/dataset/0038272/World-Bank-Official-Boundaries
 
 > Quite a self-explanatory name
 
@@ -76,7 +82,7 @@ https://datacatalog.worldbank.org/search/dataset/0038272/World-Bank-Official-Bou
 - Cannot upload shp and dbf file to github from belgium_sectors
 event while using git-lfs, here is the link to the [entire folder](https://statbel.fgov.be/fr/open-data/secteurs-statistiques-2022)
 
-
+- For some values of MAX_CHILDREN and MIN_CHILDREN the program does not work
 
 ## Contributors
 
