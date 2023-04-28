@@ -49,6 +49,11 @@ French municipalities
 
 > Quite a self-explanatory name
 
+## Current Problems
+
+- Cannot upload shp and dbf file to github from belgium_sectors
+event while using git-lfs, here is the link to the [entire folder](https://statbel.fgov.be/fr/open-data/secteurs-statistiques-2022)
+
 ## Contributors
 
 @callhc
