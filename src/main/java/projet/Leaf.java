@@ -24,7 +24,6 @@ class Leaf extends Node {
             System.out.println("Found " + name);
             return this;
         } else {
-            System.out.println("Not found in leaf");
             return null;
         }
     }

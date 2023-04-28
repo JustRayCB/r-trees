@@ -19,6 +19,18 @@ public class RTree {
         this.root = new InternalNode(new Envelope(), null); // default root
     }
 
+    public static void setMaxChildren(int max) {
+        Node.setMaxChildren(max);
+    }
+
+    public static void setMinChildren(int min) {
+        Node.setMinChildren(min);
+    }
+
+    public static void setSplitMethod(String method) {
+        Node.setSplitMethod(method);
+    }
+
     public Node search(Point p) {
         if (root != null) { // we just call the search method of the root
             return root.search(p);
@@ -69,5 +81,9 @@ public class RTree {
     public void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
             GeometryBuilder gb) {
         root.parseTree(collection, featureBuilder, gb);
+    }
+
+    public String getSplitMethod() {
+        return root.getSplitMethod();
     }
 }

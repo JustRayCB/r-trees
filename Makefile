@@ -17,7 +17,7 @@ main:
 install:
 	$(USED_COMMAND) clean install
 run:
-	$(USED_COMMAND) exec:java -Dexec.mainClass=projet.Main -Dexec.cleanupDaemonThreads=false
+	$(USED_COMMAND) exec:java -Dexec.mainClass=projet.Main -Dexec.cleanupDaemonThreads=false -Dexec.args="$(ARGS)"
 clean:
 	$(USED_COMMAND) clean
 

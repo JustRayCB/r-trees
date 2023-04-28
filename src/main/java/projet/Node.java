@@ -1,13 +1,9 @@
 package projet;
 
-// import java.util.ArrayList;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.geotools.data.collection.ListFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.GeometryBuilder;
 
@@ -16,10 +12,22 @@ abstract class Node {
     protected boolean isLeaf;
     protected Node father;
     protected final int id = name++;
-    protected static final int MAX_CHILDREN = 50;
-    protected static final int MIN_CHILDREN = 25;
-    protected static final String SPLIT_METHOD = "quadratic";
+    protected static int MAX_CHILDREN = 50;
+    protected static int MIN_CHILDREN = 25;
+    protected static String SPLIT_METHOD = "linear";
     protected static int name = 0;
+
+    public static void setMaxChildren(int max) {
+        MAX_CHILDREN = max;
+    }
+
+    public static void setMinChildren(int min) {
+        MIN_CHILDREN = min;
+    }
+
+    public static void setSplitMethod(String method) {
+        SPLIT_METHOD = method;
+    }
 
     public Node(Envelope MBR, boolean isleaf, Node father) {
         this.mbr = MBR;
@@ -67,4 +75,8 @@ abstract class Node {
 
     public abstract void parseTree(ListFeatureCollection collection, SimpleFeatureBuilder featureBuilder,
             GeometryBuilder gb);
+
+    public String getSplitMethod() {
+        return SPLIT_METHOD;
+    }
 }

@@ -3,11 +3,9 @@ package projet;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 
 import org.javatuples.Pair;
 import org.locationtech.jts.geom.Envelope;
-// import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -24,19 +22,14 @@ class InternalNode extends Node {
 
     public Node search(Point p) {
         if (mbr.contains(p.getEnvelopeInternal())) { // if the point is inside the mbr
-            System.out.println("Coordinates of the point : " + p.getCoordinate());
-            System.out.println("Coordinates of the mbr : " + mbr.toString());
-            System.out.println("searching in : " + this.toString());
-
             for (Node child : children) {
                 var result = child.search(p);
                 if (result != null) {
                     return result;
-                } else {
-                    System.out.println("Not found in node");
                 }
             }
         } // if the point is not inside the mbr, it's not inside the node or his children
+        System.out.println("Not found in " + this.toString());
         return null;
     }
 
@@ -74,16 +67,6 @@ class InternalNode extends Node {
             return split();
         }
         return null;
-    }
-
-    private void addToA(Node nodeToPlace, Envelope mbrA, Envelope mbrAWithNode, ArrayList<Node> groupA) {
-        groupA.add(nodeToPlace);
-        mbrA = mbrAWithNode;
-    }
-
-    private void addToB(Node nodeToPlace, Envelope mbrB, Envelope mbrBWithNode, ArrayList<Node> groupB) {
-        groupB.add(nodeToPlace);
-        mbrB = mbrBWithNode;
     }
 
     public Node split() {
@@ -134,12 +117,6 @@ class InternalNode extends Node {
                 children.remove(nodeToPlace);
                 Envelope mbrAWithNode = new Envelope(mbrA);
                 Envelope mbrBWithNode = new Envelope(mbrB);
-                GeometryBuilder gb = new GeometryBuilder();
-                Point p = gb.point(-66.57, -55.22);
-                if (nodeToPlace.mbr.contains(p.getCoordinate())) {
-                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                    System.out.println("J'ai trouvé le node pas dans le mbr : " + nodeToPlace.getId());
-                }
                 mbrAWithNode.expandToInclude(nodeToPlace.getMbr());
                 mbrBWithNode.expandToInclude(nodeToPlace.getMbr());
                 double areaIncreaseA = mbrAWithNode.getArea() - mbrA.getArea();
