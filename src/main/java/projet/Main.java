@@ -89,6 +89,7 @@ public class Main {
             System.out.println("Pas trouvé");
         }
 
+        System.out.println("Le nombre total de node : " + rtree.getNbrNodes());
         Style style2 = SLD.createLineStyle(Color.red, 2.0f);
         Style style3 = SLD.createLineStyle(Color.blue, 2.0f);
         Layer layer2 = new FeatureLayer(collection, style2);
