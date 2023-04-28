@@ -36,9 +36,13 @@ make run
 You can specify arguments to the program by typing this:
 
 `make run ARGS="<max child InternalNode> <min child InternalNode> <split methode>"`
+> If none attribute is passed, the default will be used
 
-> The program will then ask you to choose a data set amon a list.
-You 'll just need to enter a name of the list.
+⚠️ The attributes of the feature is used to make the label of the leaf, please change the attribute
+name in the `getAttribute("<name>")` in Main.java
+according to the dataset.
+
+You can change the dataset file in Main.java by changing the value of filename
 
 ## Clean all the compilations files
 
