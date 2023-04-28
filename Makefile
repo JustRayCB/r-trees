@@ -8,9 +8,7 @@ UNAME := $(shell uname)
 
 ifeq ($(OS),Windows_NT)
 	USED_COMMAND=$(COMMAND_WINDOWS)
-endif
-
-ifeq ($(UNAME), Linux)
+else
 	USED_COMMAND=$(COMMAND_LINUX_BASED)
 endif
 
